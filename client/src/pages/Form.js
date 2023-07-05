@@ -62,7 +62,7 @@ class Form extends Component {
                                         Sign in
                                     </button>
                                 </div>
-                                <hr className="mb-6 border-t" />
+                                <hr className="mb-6 border-t"/>
                                 <div className="flex justify-center mb-3 inline-block text-sm text-yellow-500 align-baseline hover:text-yellow-600">
                                     If you don't have an account?
                                 </div>
@@ -72,7 +72,7 @@ class Form extends Component {
                                         className="w-full px-4 py-2 font-bold text-white bg-yellow-500 rounded-full hover:bg-yellow-600 focus:outline-none focus:shadow-outline"
                                         type="sumbit"
                                     >
-                                        <a href="/register">
+                                        <a href="/signup">
                                             Sign up!
                                         </a>
                                     </button>
