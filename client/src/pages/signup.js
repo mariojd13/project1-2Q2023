@@ -8,7 +8,7 @@ class Signup extends Component {
                 <div className="flex justify-center px-12 my-12">
                     <div className="content-ce">
                         <div className="bg-white p-5 rounded-lg lg:rounded-l-none content-center">
-                            <h3 className="pt-4 text-2xl text-center font-semibold">Welcome back!</h3>
+                            <h3 className="pt-4 text-2xl text-center font-semibold">Welcome to Prompts IA</h3>
 
                             <form>
                                 <div class="relative z-0 w-full mb-6 group">
