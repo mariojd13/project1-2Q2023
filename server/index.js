@@ -8,6 +8,9 @@ const db = mongoose.connect("mongodb://127.0.0.1:27017/prompts", {
   useUnifiedTopology: true
 });
 
+
+//const Role = require("./models/role");
+
 // const {
 //   base64decode
 // } = require('nodejs-base64');
@@ -23,10 +26,20 @@ const crypto = require('crypto');
 // const { saveSession, getSession } = require('./controllers/sessionController.js');
 
 
+// Categories
+
 const {
   categoryPost, 
   categoryGet
 } = require("./controllers/typeController.js");
+
+
+// Rols
+
+const {
+  rolePost,
+  roleGet,
+} = require("./controllers/roleController.js");
 
 // parser for the request body (required for the POST and PUT methods)
 const bodyParser = require("body-parser");
@@ -146,7 +159,13 @@ app.use(function (req, res, next) {
 // app.put("/api/teachers", teacherPatch);
 // app.delete("/api/teachers", teacherDelete);
 
-// // Categories
+
+// Rols
+
+app.post("/api/role", rolePost);
+app.get("/api/role", roleGet);
+
+// Categories
 app.get("/api/categories", categoryGet);
 app.post("/api/categories", categoryPost);
 
