@@ -42,14 +42,22 @@ const {
 } = require("./controllers/roleController.js");
 
 
+// const {
+//   statusPost,
+//   statusGet,
+// } = require("./controllers/statusController.js");
+
+
 // Users
 
 
 const {
   userPost,
   userGet,
+  userPatch,
   userDelete,
-  getAllUsers,activateUser
+  getAllUsers,
+  //activateUser,
 } = require("./controllers/userController.js");
 
 
@@ -178,6 +186,11 @@ app.use(function (req, res, next) {
 app.post("/api/role", rolePost);
 app.get("/api/role", roleGet);
 
+// Status
+
+// app.post("/api/status", statusPost);
+// app.get("/api/status", statusGet);
+
 // Categories
 app.get("/api/categories", categoryGet);
 app.post("/api/categories", categoryPost);
@@ -185,9 +198,9 @@ app.post("/api/categories", categoryPost);
 // User
 app.post("/api/user", userPost);
 app.get("/api/user", userGet);
-app.get("/api/all", getAllUsers);
-app.patch("/api/user/:id", activateUser);
-app.delete("/api/user/:id", userDelete);
+app.patch("/api/user/:id", userPatch);
+//app.patch("/api/user/:id", activateUser);
+//app.delete("/api/user/:id", userDelete);
 
 
 

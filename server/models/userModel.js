@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const Role = require('../models/roleModel');
+//const Status = require('../models/statusModel');
 
 const user = new Schema({
 
@@ -10,11 +11,15 @@ const user = new Schema({
   email: { type: String },
   password1: { type: String },
   password2: { type: String },
-  role: {
-    type: mongoose.Schema.Types.ObjectId, ref: 'Role'
-  },
+    role: {
+    type: Role.schema
+   },
+  //  status: {
+  //   type: Status.schema
+  //  },
 
-  //status: { type: String, enum: ['Pending', 'Active'], default: 'Pending' },
+
+  status: { type: String, enum: ['Pending', 'Active'], default: 'Pending' },
   //confirmCode: { type: String},
   //phoneCode: { type: String,required: false },
   //tokenTemp: { type: String,required: false },

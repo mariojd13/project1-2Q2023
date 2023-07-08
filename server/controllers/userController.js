@@ -53,7 +53,7 @@ const userGet = (req, res) => {
   // if an specific user is required
   if (req.query && req.query.id) {
     User.findById(req.query.id)
-      .then( (user) => {
+      .then((user) => {
         res.json(user);
       })
       .catch(err => {
@@ -64,7 +64,7 @@ const userGet = (req, res) => {
   } else {
     // get all users
     User.find()
-      .then( user => {
+      .then(user => {
         res.json(user);
       })
       .catch(err => {
@@ -135,11 +135,47 @@ const activateUser = async (req, res) => {
     return res.status(500).json({ msg: 'Internal server error' });
   }
 };
+
+const userPatch = (req, res) => {
+  // Get user by id
+  console.log(req.body);
+
+  if (req.body && req.body._id) {
+    console.log(req._id)
+    User.findById(req.body._id, function (err, user) {
+      if (err) {
+        res.status(404);//Not Found
+        console.log('Error while queryting the user', err)
+        res.json({ error: "User doesnt exist" })
+      }
+      user.first_name = req.body.first_name ? req.body.first_name : user.first_name;
+      user.last_name = req.body.last_name ? req.body.last_name : user.last_name;
+      user.role = req.body.role ? req.body.role : user.role;
+      user.status = req.body.status ? req.body.status : user.status;
+      user.save(function (err) {
+        if (err) {
+          res.status(400);//bad requests
+          console.log('Error while saving the user', err)
+          res.json({
+            error: 'There was an error saving the user'
+          });
+        }
+        res.status(200); // OK
+        res.json(user);
+      });
+    });
+  } else {
+    res.status(404);
+    res.json({ error: "User doesnt exist" })
+  }
+};
+
+
 module.exports = {
   userPost,
   userGet,
+  userPatch,
   userDelete,
-  getAllUsers,
-  activateUser
+  getAllUsers
 }
 
