@@ -41,6 +41,19 @@ const {
   roleGet,
 } = require("./controllers/roleController.js");
 
+
+// Users
+
+
+const {
+  userPost,
+  userGet,
+  userDelete,
+  getAllUsers,activateUser
+} = require("./controllers/userController.js");
+
+
+
 // parser for the request body (required for the POST and PUT methods)
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
@@ -169,4 +182,13 @@ app.get("/api/role", roleGet);
 app.get("/api/categories", categoryGet);
 app.post("/api/categories", categoryPost);
 
-app.listen(3001, () => console.log(`Example app listening on port 3001!`))
+// User
+app.post("/api/user", userPost);
+app.get("/api/user", userGet);
+app.get("/api/all", getAllUsers);
+app.patch("/api/user/:id", activateUser);
+app.delete("/api/user/:id", userDelete);
+
+
+
+app.listen(3001, () => console.log(`Project app listening on port 3001!`))
