@@ -1,9 +1,8 @@
 import React, { Component, useState } from 'react';
 import Navbar from "../comun/navbar";
 
-//import './modal.css';
 import { getRoles } from '../services/rolService';
-//import { getSession } from '../services/sessionService';
+import { getUsers, updateUsers } from '../services/userService';
 
 
 
@@ -24,7 +23,7 @@ class Edit extends Component {
     };
 
     componentDidMount() {
-        //this.getUsers();
+        this.getUsers();
         this.getRoles();
 
 
@@ -40,6 +39,38 @@ class Edit extends Component {
         this.setState({ isLoading: false });
     }
 
+    getUsers = async () => {
+        this.setState({ isLoading: true });
+        const { error, data } = await getUsers()
+        //console.log(data);
+        if (data) {
+            this.setState({ data })
+        }
+        this.setState({ isLoading: false });
+    }
+
+    patchSource = async (e) => {
+        e.preventDefault();
+        this.state.form.first_name = e.target.first_name.value;
+        this.state.form.last_name = e.target.last_name.value;
+        this.state.form.role_id = e.target.rol_id.value;//set values to new form
+
+        console.log("this.state.form");        
+        console.log(this.state.form);
+        
+
+        const { error } = await updateUsers(this.state.form);// send data to upddate source
+        if (!error) {
+            alert("Source has been modified! sucessfully")
+            this.handleModal();
+            await this.gettingCategories();
+            //await this.gettingSources();
+
+
+        }
+        this.setState({ isLoading: false });
+    }
+
 
     render() {
         return (
@@ -48,9 +79,9 @@ class Edit extends Component {
                 <div className="flex justify-center px-12 my-12">
                     <div className="content-ce">
                         <div className="bg-white p-5 rounded-lg lg:rounded-l-none content-center">
-                            <h3 className="pt-4 text-2xl text-center font-semibold">Welcome to Prompts IA</h3>
+                            <h3 className="pt-4 text-2xl text-center font-semibold">Editing the user</h3>
 
-                            <form className="px-8 pt-6 pb-8 mb-4 bg-white rounded" onSubmit={this.postUser} method="POST">
+                            <form className="px-8 pt-6 pb-8 mb-4 bg-white rounded" onSubmit={this.patchSource} method="POST">
                                 <div class="grid md:grid-cols-2 md:gap-6">
                                     <div>
                                         <div class="relative z-0 w-full mb-6 group">

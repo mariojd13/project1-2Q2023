@@ -198,9 +198,9 @@ app.post("/api/categories", categoryPost);
 // User
 app.post("/api/user", userPost);
 app.get("/api/user", userGet);
-app.patch("/api/user/:id", userPatch);
+app.patch("/api/user", userPatch);
 //app.patch("/api/user/:id", activateUser);
-//app.delete("/api/user/:id", userDelete);
+app.delete("/api/user/:id", userDelete);
 
 
 

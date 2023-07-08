@@ -77,19 +77,19 @@ const userGet = (req, res) => {
 
 const userDelete = async (req, res) => {
   try {
-    const userId = req.params.id; // assuming that you're passing the user ID in the request params
+    const userId = req.params.id;
 
     // find the user by ID and delete it
     const result = await User.findByIdAndDelete(userId);
 
     if (!result) {
-      return res.status(404).json({ msg: 'User not found' });
+      return res.status(404).json({ msg: 'User not found' });// //not found
     }
 
     return res.json({ msg: 'User deleted successfully' });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ msg: 'Internal server error' });//Internal server error
+    return res.status(500).json({ msg: 'Internal server error' });
   }
 };
 
@@ -109,7 +109,7 @@ const getAllUsers = (req, res) => {
 
 const activateUser = async (req, res) => {
   try {
-    const userId = req.params.id; // assuming that you're passing the user ID in the request params
+    const userId = req.params.id;
 
     // find the user by ID and update the status
     const result = User.findByIdAndUpdate(userId, { status: "Active" }, function (err, user) {
@@ -135,6 +135,9 @@ const activateUser = async (req, res) => {
     return res.status(500).json({ msg: 'Internal server error' });
   }
 };
+
+
+// SIN EL CHECK BOX
 
 const userPatch = (req, res) => {
   // Get user by id
