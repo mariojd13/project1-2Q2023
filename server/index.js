@@ -41,11 +41,12 @@ const {
   roleGet,
 } = require("./controllers/roleController.js");
 
+// Status
 
-// const {
-//   statusPost,
-//   statusGet,
-// } = require("./controllers/statusController.js");
+const {
+  statusPost,
+  statusGet,
+} = require("./controllers/statusController.js");
 
 
 // Users
@@ -188,8 +189,8 @@ app.get("/api/role", roleGet);
 
 // Status
 
-// app.post("/api/status", statusPost);
-// app.get("/api/status", statusGet);
+app.post("/api/status", statusPost);
+app.get("/api/status", statusGet);
 
 // Categories
 app.get("/api/categories", categoryGet);
