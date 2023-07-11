@@ -1,12 +1,14 @@
 const User = require("../models/userModel");
 const Role = require("../models/roleModel");
+const Status = require("../models/statusModel");
 const crypto = require('crypto');
 
 const userPost = async (req, res) => {
   var user = new User();
 
   const role = await Role.findById(req.body.role_id) // Get role by ID
-
+  const status = await Status.findById(req.body.status_id) 
+  
   // Set user data
   user.email = req.body.email;
   user.first_name = req.body.first_name;
@@ -15,7 +17,7 @@ const userPost = async (req, res) => {
   user.password2 = crypto.createHash('md5').update(req.body.password2).digest("hex");
 
   user.role = role;
-
+  user.status = status;
   if (user.email
     && user.first_name
     && user.last_name
@@ -23,6 +25,7 @@ const userPost = async (req, res) => {
     && user.password2
     && user.password1 === user.password2
     && user.role
+    && user.status
 
   ) {// If all required data is provided
     try {
@@ -181,4 +184,3 @@ module.exports = {
   userDelete,
   getAllUsers
 }
-

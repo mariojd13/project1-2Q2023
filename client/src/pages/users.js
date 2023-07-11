@@ -2,38 +2,46 @@ import React, { Component } from 'react';
 import Navbar from "../comun/navbar";
 import { getRoles } from '../services/rolService';
 import { getUsers, updateUsers, deleteUsers } from '../services/userService';
+import { getStatus } from '../services/statusService';
 
 class Users extends Component {
 
     state = {
         data: [],
         form: {
-          first_name: "",
-          last_name: "",
-          role_id: "",
-          is_active: false, // Campo de estado como un booleano
+            first_name: "",
+            last_name: "",
+            role_id: "",
+            status_id: "", // Agregar la propiedad status_id en el estado
+            is_active: false,
         },
         roles: [],
+        statuss: [], // Agregar la propiedad statuss en el estado
         showModal: false,
         selectedUser: null,
-      };
+    };
 
     componentDidMount() {
         this.getUsers();
         this.getRoles();
-        //this.updateUsers();
+        this.getStatus();
     }
 
     getUsers = async () => {
         try {
-            const { error, data } = await getUsers();
-            if (data) {
+            const { data, error } = await getUsers();
+            if (!error) {
                 this.setState({ data });
+            } else {
+                this.setState({ data: [] }); // Establecer un valor predeterminado para data en caso de error
             }
         } catch (error) {
             console.log(error);
+            this.setState({ data: [] }); // Establecer un valor predeterminado para data en caso de error
         }
     }
+
+
 
     getRoles = async () => {
         try {
@@ -49,25 +57,27 @@ class Users extends Component {
     handleOpenModal = (user) => {
         const { first_name, last_name, role, status, is_active } = user;
         this.setState({
-          showModal: true,
-          selectedUser: user,
-          form: {
-            first_name,
-            last_name,
-            role_id: role._id,
-            role_name: role.name,
-            is_active: is_active, // Actualizar el campo is_active usando el valor del usuario
-          },
-          initialForm: {
-            first_name,
-            last_name,
-            role_id: role._id,
-            role_name: role.name,
-            is_active: is_active, // Actualizar el campo is_active usando el valor del usuario
-          },
+            showModal: true,
+            selectedUser: user,
+            form: {
+                first_name,
+                last_name,
+                role_id: role._id,
+                role_name: role.name,
+                status_id: status.name, // Obtener el valor del status desde selectedUser
+                status_name: status.name,
+            },
+            initialForm: {
+                first_name,
+                last_name,
+                role_id: role._id,
+                role_name: role.name,
+                status_id: status.name, // Obtener el valor del status desde selectedUser
+                status_name: status.name,
+            },
         });
-      };
-      
+    };
+
 
     handleCloseModal = () => {
         // Cerrar el modal
@@ -93,51 +103,46 @@ class Users extends Component {
 
 
 
-// FUNCIONA PERO SIN EL CHECK BOX
     handleEditUser = async (e) => {
         e.preventDefault();
         const { selectedUser, form } = this.state;
-        const updatedUser = { ...selectedUser, ...form, user: form.role_id };
-
-        try {
+        const updatedUser = {
+          ...selectedUser,
+          ...form,
+          status: { name: form.status_id }, // Obtiene el valor actualizado del status
+          user: form.role_id
+        };
+      
+        // Muesta mensaje de confirmación
+        const confirmation = window.confirm(
+          `¿Está seguro que desea guardar los cambios para el usuario: ${selectedUser.first_name}?`
+        );
+      
+        if (confirmation) {
+          try {
             const { error, data } = await updateUsers(updatedUser);
             if (data && !error) {
-                console.log("User updated:", data);
-                // Actualizar el estado de los datos
-                const updatedData = this.state.data.map((user) => {
-                    if (user._id === data._id) {
-                        return data;
-                    }
-                    return user;
-                });
-
-                this.setState({ data: updatedData });
-
-                // Cerrar el modal
-                this.handleCloseModal();
+              console.log("User updated:", data);
+              // Actualizar el estado de los datos
+              const updatedData = this.state.data.map((user) => {
+                if (user._id === data._id) {
+                  return data;
+                }
+                return user;
+              });
+      
+              this.setState({ data: updatedData });
+      
+              // Cerrar el modal
+              this.handleCloseModal();
             }
-        } catch (error) {
+          } catch (error) {
             console.log(error);
+          }
         }
-    }
+      }
       
-
-//FUNCIONA PERO SIN EL CHECK BOX
-
-handleInputChange = (e) => {
-    const { name, type, checked } = e.target;
-    const inputValue = type === 'checkbox' ? checked : e.target.value;
-  
-    this.setState((prevState) => ({
-      form: {
-        ...prevState.form,
-        [name]: inputValue,
-        is_active: checked // Agregar esta línea para actualizar el campo is_active según el estado del checkbox
-      },
-    }));
-  };
       
-
     handleRoleChange = (e) => {
         const roleId = e.target.value;
         const roleName = e.target.options[e.target.selectedIndex].text;
@@ -149,6 +154,38 @@ handleInputChange = (e) => {
             },
         }));
     }
+
+    getStatus = async () => {
+        try {
+            const { data, error } = await getStatus(); // Obtener los status desde la base de datos
+            if (!error) {
+                this.setState({ statuss: data });
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    handleInputChange = (e) => {
+        const { name, value } = e.target;
+        this.setState((prevState) => ({
+            form: {
+                ...prevState.form,
+                [name]: value
+            }
+        }));
+    }
+
+    handleStatusChange = (e) => {
+        const statusName = e.target.value;
+        this.setState((prevState) => ({
+            form: {
+                ...prevState.form,
+                status_id: statusName,
+                status_name: statusName
+            },
+        }));
+    };
 
 
     handleDeleteUser = async (user) => {
@@ -172,7 +209,7 @@ handleInputChange = (e) => {
 
 
     render() {
-        const { showModal, selectedUser, roles } = this.state;
+        const { showModal, selectedUser, roles, statuss } = this.state;
 
         return (
             <div className="container mx-auto centar">
@@ -206,7 +243,7 @@ handleInputChange = (e) => {
                                         <tr key={user._id}>
                                             <td className="px-6 py-4">{user.first_name}</td>
                                             <td className="px-6 py-4">{user.last_name}</td>
-                                            <td className="px-6 py-4">{user.status}</td>
+                                            <td className="px-6 py-4">{user.status && user.status.name}</td>
                                             <td className="px-6 py-4">{user.role.name}</td>
                                             <td className="px-6 py-4">
                                                 <button
@@ -262,6 +299,19 @@ handleInputChange = (e) => {
                                     />
                                 </div>
                                 <div className="mb-4">
+                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="last_name">
+                                        Last Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        name="last_name"
+                                        id="last_name"
+                                        className="block w-full border-gray-300 rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
+                                        value={this.state.form.last_name}
+                                        onChange={this.handleInputChange}
+                                    />
+                                </div>
+                                <div className="mb-4">
                                     <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="role_id">
                                         Role
                                     </label>
@@ -281,19 +331,21 @@ handleInputChange = (e) => {
                                     </select>
                                 </div>
                                 <div className="mb-4">
-                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="is_active">
+                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="status_id">
                                         Status
                                     </label>
-                                    <input
-                                        type="checkbox"
-                                        name="is_active"
-                                        id="is_active"
-                                        className="mr-2 leading-tight"
-                                        checked={this.state.form.is_active}
-                                        onChange={this.handleInputChange}
-                                    />
-                                    <span className="text-sm">Active</span>
+                                    <select
+                                        name="status_id"
+                                        id="status_id"
+                                        className="block w-full border-gray-300 rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
+                                        value={this.state.form.status_id}
+                                        onChange={this.handleStatusChange}
+                                    >
+                                        <option value="pending">Pending</option> 
+                                        <option value="active">Active</option>
+                                    </select>
                                 </div>
+
                                 <div className="flex justify-end">
                                     <button
                                         className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"

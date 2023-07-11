@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const Role = require('../models/roleModel');
-//const Status = require('../models/statusModel');
+const Status = require('../models/statusModel');
 
 const user = new Schema({
 
@@ -14,12 +14,12 @@ const user = new Schema({
     role: {
     type: Role.schema
    },
-  //  status: {
-  //   type: Status.schema
-  //  },
+    status: {
+     type: Status.schema,
+     default: 'Pending'
+    }
 
-
-  status: { type: String, enum: ['Pending', 'Active'], default: 'Pending' },
+  //status: { type: String, enum: ['Pending', 'Active'], default: 'Pending' },
   //confirmCode: { type: String},
   //phoneCode: { type: String,required: false },
   //tokenTemp: { type: String,required: false },

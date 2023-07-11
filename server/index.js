@@ -17,14 +17,6 @@ const db = mongoose.connect("mongodb://127.0.0.1:27017/prompts", {
 
 const crypto = require('crypto');
 
-// const {
-//   teacherPatch,
-//   teacherPost,
-//   teacherGet,
-//   teacherDelete
-// } = require("./controllers/teacherController.js");
-// const { saveSession, getSession } = require('./controllers/sessionController.js');
-
 
 // Categories
 
