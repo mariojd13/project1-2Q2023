@@ -83,7 +83,7 @@ class Users extends Component {
         // Cerrar el modal
         this.setState({ showModal: false, selectedUser: null });
 
-        // Actualizar el estado de los usuarios con el nuevo rol
+        // Actualiza el estado de los usuarios con el nuevo rol
         const { data, selectedUser, form } = this.state;
         const updatedData = data.map((user) => {
             if (user._id === selectedUser._id) {
