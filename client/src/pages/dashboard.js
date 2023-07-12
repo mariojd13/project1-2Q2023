@@ -1,79 +1,206 @@
 import React, { Component, useState } from 'react';
 import Navbar from "../comun/navbar";
+import Sliderbar from '../comun/sliderbar';
+
 
 class Dashboard extends Component {
 
+    state = {
+        showModal: false, // Estado para controlar la apertura y cierre del modal principal
+        showEditModal: false, // Estado para controlar la apertura y cierre del modal de edición
+        form: {
+            name: '',
+            type: '',
+            input: '',
+            instructions: '',
+            temperature: 0,
+        },
+    };
 
+    handleOpenModal = () => {
+        this.setState({ showModal: true });
+    };
+
+    handleCloseModal = () => {
+        this.setState({ showModal: false });
+    };
+
+    handleOpenEditModal = () => {
+        this.setState({ showEditModal: true });
+    };
+
+    handleCloseEditModal = () => {
+        this.setState({ showEditModal: false });
+    };
+
+    handleInputChange = (e) => {
+        const { name, value } = e.target;
+        this.setState((prevState) => ({
+            form: {
+                ...prevState.form,
+                [name]: value,
+            },
+        }));
+    };
+
+    handleFormSubmit = (e) => {
+        e.preventDefault();
+        // Aquí puedes realizar la lógica para enviar los datos del formulario
+        console.log(this.state.form);
+    };
 
     render() {
-
-
-
+        const { showModal, showEditModal } = this.state;
         return (
 
-            <div className="container mx-auto centar">
-                <Navbar />
-                <div className="flex justify-center px-12 my-12">
+            <div className="flex">
+                <div className="sliderbar-wrapper" style={{ width: '250px', position: 'relative', zIndex: 1 }}>
+                    <Navbar />
+                    <Sliderbar />
+                </div>
+                <div className="flex-1 px-12 my-12">
                     <div className="content-ce">
-                        <div className="bg-white p-5 rounded-lg lg:rounded-l-none content-center"></div>
-                        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                        <div className="bg-white p-5 rounded-lg lg:rounded-l-none content-center flex">
+                            {/* Sección 1: Add */}
+                            <button
+                                className="bg-white border-b dark:bg-gray-900 dark:border-gray-700 flex-1 flex flex-col items-center justify-center"
+                                title="New"
+                                onClick={this.handleOpenModal} // Agregamos el evento onClick para abrir el modal
+                            >
+                                <h1 className="text-2xl font-semibold mb-2 text-center">Add</h1>
+                                <h3 className="text-lg font-semibold mb-2 text-center">Prompts</h3>
+                                {/* Contenido de la sección Add */}
+                            </button>
 
-                            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                    <tr>
-                                        <th scope="col" class="px-6 py-3">
-                                            Name
-                                        </th>
-                                        <th scope="col" class="px-6 py-3">
-                                            Type
-                                        </th>
-                                        <th scope="col" class="px-6 py-3">
-                                            Tags
-                                        </th>
-                                        <th scope="col" class="px-6 py-3">
-                                            Action
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-                                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                            Prompt 1
-                                        </th>
-                                        <td class="px-6 py-4">
-                                            Edit
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            tag1 - tag2 
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <a href="#" class="font-medium text-yellow-600 dark:text-yellow-500 hover:underline">Edit</a>
-                                            |
-                                            <a href="#" class="font-medium text-yellow-600 dark:text-yellow-500 hover:underline">Delate</a>
-                                        </td>
-                                    </tr>
-                                    <tr class="border-b bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
-                                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                            Prompt 2
-                                        </th>
-                                        <td class="px-6 py-4">
-                                            Other
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            tag1 - tag2
-                                        </td>
-                                        <td class="px-6 py-4">
-                                            <a href="#" class="font-medium text-yellow-600 dark:text-yellow-500 hover:underline">Edit</a>
-                                            |
-                                            <a href="#" class="font-medium text-yellow-600 dark:text-yellow-500 hover:underline">Delate</a>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                            {/* Sección 2: Edit */}
+                            <div className="bg-white border-b dark:bg-gray-900 dark:border-gray-700 flex-1">
+                                <a href="./editPrompt" className="w-full h-full flex flex-col items-center justify-center">
+                                    <h1 className="text-2xl font-semibold mb-2 text-center">Edit</h1>
+                                    <h3 className="text-lg font-semibold mb-2 text-center">Prompts</h3>
+                                    {/* Contenido de la sección Edit */}
+                                </a>
+                            </div>
+
+
+                            {/* Sección 3: Images */}
+                            <div className="bg-white border-b dark:bg-gray-900 dark:border-gray-700 flex-1">
+                                <a href="./imagePrompt" className="w-full h-full flex flex-col items-center justify-center">
+                                    <h2 className="text-xl font-semibold mb-2 text-center">Images</h2>
+                                    <h3 className="text-lg font-semibold mb-2 text-center">Prompts</h3>
+                                </a>
+                                {/* Contenido de la sección Images */}
+                            </div>
+                            {/* Sección 4: Otros */}
+                            <div className="bg-white border-b dark:bg-gray-900 dark:border-gray-700 flex-1">
+                                <a href="./completitionsPrompt" className="w-full h-full flex flex-col items-center justify-center">
+                                    <h2 className="text-xl font-semibold mb-2 text-center">Completitions</h2>
+                                    <h3 className="text-lg font-semibold mb-2 text-center">Prompts</h3>
+                                </a>
+                                {/* Contenido de la sección Otros */}
+                            </div>
                         </div>
                     </div>
+                    {showModal && (
+                        <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
+                            <div className="bg-white rounded-lg p-8" style={{ width: '500px', height: 'auto', position: 'relative', zIndex: 1 }}>
+                                <h3 className="text-2xl font-semibold mb-6">New Modal Content</h3>
+                                <form onSubmit={this.handleFormSubmit}>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">
+                                                Name <span className="text-red-500">*</span>
+                                            </label>
+                                            <input
+                                                type="text"
+                                                id="name"
+                                                name="name"
+                                                value={this.state.form.name}
+                                                onChange={this.handleInputChange}
+                                                required
+                                                className="block w-full border border-gray-300 rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label htmlFor="type" className="block text-gray-700 text-sm font-bold mb-2">
+                                                Type <span className="text-red-500">*</span>
+                                            </label>
+                                            <select
+                                                id="type"
+                                                name="type"
+                                                value={this.state.form.type}
+                                                onChange={this.handleInputChange}
+                                                required
+                                                className="block w-full border border-gray-300 rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
+                                            >
+                                                <option value="">Select Type</option>
+                                                <option value="Option 1">Option 1</option>
+                                                <option value="Option 2">Option 2</option>
+                                                <option value="Option 3">Option 3</option>
+                                            </select>
+                                        </div>
+                                        <div className="col-span-2">
+                                            <label htmlFor="input" className="block text-gray-700 text-sm font-bold mb-2">
+                                                Input <span className="text-red-500">*</span>
+                                            </label>
+                                            <textarea
+                                                id="input"
+                                                name="input"
+                                                value={this.state.form.input}
+                                                onChange={this.handleInputChange}
+                                                required
+                                                className="block w-full border border-gray-300 rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
+                                            ></textarea>
+                                        </div>
+                                        <div className="col-span-2">
+                                            <label htmlFor="instructions" className="block text-gray-700 text-sm font-bold mb-2">
+                                                Instructions <span className="text-red-500">*</span>
+                                            </label>
+                                            <textarea
+                                                id="instructions"
+                                                name="instructions"
+                                                value={this.state.form.instructions}
+                                                onChange={this.handleInputChange}
+                                                required
+                                                className="block w-full border border-gray-300 rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
+                                            ></textarea>
+                                        </div>
+                                        <div>
+                                            <label htmlFor="temperature" className="block text-gray-700 text-sm font-bold mb-2">
+                                                Temperature
+                                            </label>
+                                            <input
+                                                type="number"
+                                                id="temperature"
+                                                name="temperature"
+                                                value={this.state.form.temperature}
+                                                onChange={this.handleInputChange}
+                                                className="block w-full border border-gray-300 rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="flex justify-end mt-6">
+                                        <button
+                                            type="submit"
+                                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+                                        >
+                                            Save
+                                        </button>
+                                        <button
+                                            type="button"
+                                            className="px-4 py-2 ml-4 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 focus:outline-none focus:bg-gray-400"
+                                            onClick={this.handleCloseModal}
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
+
 
 
         )

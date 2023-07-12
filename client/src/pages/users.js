@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import Navbar from "../comun/navbar";
+import Sliderbar from '../comun/sliderbar';
 import { getRoles } from '../services/rolService';
 import { getUsers, updateUsers, deleteUsers } from '../services/userService';
 import { getStatus } from '../services/statusService';
+import EditImage from '../images/edit.png';
+import DeleteImage from '../images/delete.png';
 
 class Users extends Component {
 
@@ -107,42 +110,43 @@ class Users extends Component {
         e.preventDefault();
         const { selectedUser, form } = this.state;
         const updatedUser = {
-          ...selectedUser,
-          ...form,
-          status: { name: form.status_id }, // Obtiene el valor actualizado del status
-          user: form.role_id
+            ...selectedUser,
+            ...form,
+            status: { name: form.status_id }, // Obtiene el valor actualizado del status
+            //status: form.status_id,
+            user: form.role_id
         };
-      
+
         // Muesta mensaje de confirmación
         const confirmation = window.confirm(
-          `¿Está seguro que desea guardar los cambios para el usuario: ${selectedUser.first_name}?`
+            `¿Está seguro que desea guardar los cambios para el usuario: ${selectedUser.first_name}?`
         );
-      
+
         if (confirmation) {
-          try {
-            const { error, data } = await updateUsers(updatedUser);
-            if (data && !error) {
-              console.log("User updated:", data);
-              // Actualizar el estado de los datos
-              const updatedData = this.state.data.map((user) => {
-                if (user._id === data._id) {
-                  return data;
+            try {
+                const { error, data } = await updateUsers(updatedUser);
+                if (data && !error) {
+                    console.log("User updated:", data);
+                    // Actualizar el estado de los datos
+                    const updatedData = this.state.data.map((user) => {
+                        if (user._id === data._id) {
+                            return data;
+                        }
+                        return user;
+                    });
+
+                    this.setState({ data: updatedData });
+
+                    // Cerrar el modal
+                    this.handleCloseModal();
                 }
-                return user;
-              });
-      
-              this.setState({ data: updatedData });
-      
-              // Cerrar el modal
-              this.handleCloseModal();
+            } catch (error) {
+                console.log(error);
             }
-          } catch (error) {
-            console.log(error);
-          }
         }
-      }
-      
-      
+    }
+
+
     handleRoleChange = (e) => {
         const roleId = e.target.value;
         const roleName = e.target.options[e.target.selectedIndex].text;
@@ -212,64 +216,66 @@ class Users extends Component {
         const { showModal, selectedUser, roles, statuss } = this.state;
 
         return (
-            <div className="container mx-auto centar">
-                <Navbar />
-                <div className="flex justify-center px-12 my-12">
-                    <div className="content-ce">
-                        <div className="bg-white p-5 rounded-lg lg:rounded-l-none content-center"></div>
-                        <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-                            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                                    <tr>
-                                        <th scope="col" className="px-6 py-3">
-                                            Name
-                                        </th>
-                                        <th scope="col" className="px-6 py-3">
-                                            Last Name
-                                        </th>
-                                        <th scope="col" className="px-6 py-3">
-                                            Status
-                                        </th>
-                                        <th scope="col" className="px-6 py-3">
-                                            Role
-                                        </th>
-                                        <th scope="col" className="px-6 py-3">
-                                            Action
-                                        </th>
+            <div className="flex">
+
+                <div className="sliderbar-wrapper" style={{ width: '250px', position: 'relative', zIndex: 1 }}>
+                    <Navbar /><Sliderbar />
+                </div>
+                <div className="flex-1 px-12 my-12">
+                    <div className="bg-white p-5 rounded-lg lg:rounded-l-none content-center"></div>
+                    <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+                        <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                                <tr>
+                                    <th scope="col" className="px-6 py-3">
+                                        Name
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Last Name
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Status
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Role
+                                    </th>
+                                    <th scope="col" className="px-6 py-3">
+                                        Action
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {this.state.data.map((user) => (
+                                    <tr key={user._id}>
+                                        <td className="px-6 py-4">{user.first_name}</td>
+                                        <td className="px-6 py-4">{user.last_name}</td>
+                                        <td className="px-6 py-4">{user.status && user.status.name}</td>
+                                        <td className="px-6 py-4">{user.role.name}</td>
+                                        <td className="px-6 py-4">
+                                            <button
+                                                className="font-medium text-yellow-600 dark:text-yellow-500 hover:underline mr-2"
+                                                onClick={() => this.handleOpenModal(user)}
+                                            >
+                                                <img className="w-6 h-6" src={EditImage} alt="user photo" />
+                                            </button>
+                                            <button
+                                                className="font-medium text-yellow-600 dark:text-yellow-500 hover:underline ml-2"
+                                                onClick={() => this.handleDeleteUser(user)}
+                                            >
+                                                <img className="w-6 h-6" src={DeleteImage} alt="user photo" />
+                                            </button>
+                                        </td>
                                     </tr>
-                                </thead>
-                                <tbody>
-                                    {this.state.data.map((user) => (
-                                        <tr key={user._id}>
-                                            <td className="px-6 py-4">{user.first_name}</td>
-                                            <td className="px-6 py-4">{user.last_name}</td>
-                                            <td className="px-6 py-4">{user.status && user.status.name}</td>
-                                            <td className="px-6 py-4">{user.role.name}</td>
-                                            <td className="px-6 py-4">
-                                                <button
-                                                    className="font-medium text-yellow-600 dark:text-yellow-500 hover:underline"
-                                                    onClick={() => this.handleOpenModal(user)}
-                                                >
-                                                    Edit
-                                                </button>
-                                                |
-                                                <button
-                                                    className="font-medium text-yellow-600 dark:text-yellow-500 hover:underline"
-                                                    onClick={() => this.handleDeleteUser(user)}
-                                                >
-                                                    Delete
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                ))}
+                            </tbody>
+                        </table>
                     </div>
+
+
                 </div>
                 {showModal && selectedUser && (
                     <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
-                        <div className="bg-white rounded-lg p-8">
+                        <div className="bg-white rounded-lg p-8" style={{ width: '500px', height: 'auto', position: 'relative', zIndex: 1 }}>
                             <h3 className="text-2xl font-semibold mb-6">Edit User</h3>
                             <form onSubmit={this.handleEditUser}>
                                 <div className="mb-4">
@@ -341,7 +347,7 @@ class Users extends Component {
                                         value={this.state.form.status_id}
                                         onChange={this.handleStatusChange}
                                     >
-                                        <option value="pending">Pending</option> 
+                                        <option value="pending">Pending</option>
                                         <option value="active">Active</option>
                                     </select>
                                 </div>
@@ -364,6 +370,7 @@ class Users extends Component {
                         </div>
                     </div>
                 )}
+
             </div>
         );
     }
