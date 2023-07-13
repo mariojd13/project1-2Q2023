@@ -1,4 +1,5 @@
 import React, { Component, useState } from 'react';
+import { getCategories } from "../services/typeStervice";
 import Navbar from "../comun/navbar";
 import Sliderbar from '../comun/sliderbar';
 
@@ -10,12 +11,18 @@ class Dashboard extends Component {
         showEditModal: false, // Estado para controlar la apertura y cierre del modal de edición
         form: {
             name: '',
-            type: '',
+            type_id: '',
+            type_name: '',
             input: '',
             instructions: '',
             temperature: 0,
         },
+        types: [],
     };
+
+    componentDidMount() {
+        this.getCategories();
+    }
 
     handleOpenModal = () => {
         this.setState({ showModal: true });
@@ -43,6 +50,29 @@ class Dashboard extends Component {
         }));
     };
 
+    getCategories = async () => {
+        try {
+            const { data, error } = await getCategories();
+            if (!error) {
+                this.setState({ types: data });
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    handleInputTypeChange = (e) => {
+        const typeId = e.target.value;
+        const typeName = e.target.options[e.target.selectedIndex].text;
+        this.setState((prevState) => ({
+            form: {
+                ...prevState.form,
+                type_id: typeId,
+                type_name: typeName
+            },
+        }));
+    }
+
     handleFormSubmit = (e) => {
         e.preventDefault();
         // Aquí puedes realizar la lógica para enviar los datos del formulario
@@ -50,7 +80,7 @@ class Dashboard extends Component {
     };
 
     render() {
-        const { showModal, showEditModal } = this.state;
+        const { showModal, types } = this.state;
         return (
 
             <div className="flex">
@@ -103,7 +133,7 @@ class Dashboard extends Component {
                     {showModal && (
                         <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
                             <div className="bg-white rounded-lg p-8" style={{ width: '500px', height: 'auto', position: 'relative', zIndex: 1 }}>
-                                <h3 className="text-2xl font-semibold mb-6">New Modal Content</h3>
+                                <h3 className="text-2xl font-semibold mb-6">Adding New Prompt</h3>
                                 <form onSubmit={this.handleFormSubmit}>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
@@ -120,24 +150,26 @@ class Dashboard extends Component {
                                                 className="block w-full border border-gray-300 rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
                                             />
                                         </div>
-                                        <div>
+                                        <div className="mb-4">
                                             <label htmlFor="type" className="block text-gray-700 text-sm font-bold mb-2">
                                                 Type <span className="text-red-500">*</span>
                                             </label>
                                             <select
-                                                id="type"
-                                                name="type"
-                                                value={this.state.form.type}
-                                                onChange={this.handleInputChange}
-                                                required
+                                                name="type_id"
+                                                id="type_id"
                                                 className="block w-full border border-gray-300 rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:border-blue-500"
+                                                value={this.state.form.type_id}
+                                                onChange={this.handleInputTypeChange}
                                             >
-                                                <option value="">Select Type</option>
-                                                <option value="Option 1">Option 1</option>
-                                                <option value="Option 2">Option 2</option>
-                                                <option value="Option 3">Option 3</option>
+                                                <option value={0}>Select Type</option>
+                                                {this.state.types.map((type) => (
+                                                    <option key={type._id} value={type._id}>
+                                                        {type.name}
+                                                    </option>
+                                                ))}
                                             </select>
                                         </div>
+
                                         <div className="col-span-2">
                                             <label htmlFor="input" className="block text-gray-700 text-sm font-bold mb-2">
                                                 Input <span className="text-red-500">*</span>
