@@ -1,21 +1,21 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const User = require('../models/userModel');
+//const User = require('../models/userModel');
 const Category = require('../models/categoryModel');
 
-const prompt = new Schema({
+const promptImageModel = new Schema({
 
     name: { type: String },
-    input: { type: String },
-    instructions: { type: String },
-    tempure: { type: String },
-    user: {
-        type: User.schema
-    },
-    category:{
-        type: Category.schema
-    }
+    prompt: { type: String },
+    response: {type: String},
+    n: {type: Number},
+    size: { type: String },
+    url1: {type: String},
+    url2: {type: String},
+      category:{
+          type: Category.schema
+      }
 },);
 
-module.exports = mongoose.model('prompts', prompt)
+module.exports = mongoose.model('prompts', promptImageModel)

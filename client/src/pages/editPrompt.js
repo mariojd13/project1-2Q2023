@@ -9,15 +9,19 @@ import AddImage from '../images/new.png';
 class editPrompt extends Component {
 
     state = {
-        showModal: false, // Estado para controlar la apertura y cierre del modal principal
-        showEditModal: false, // Estado para controlar la apertura y cierre del modal de edición
+        showModal: false,
+        showEditModal: false, // Agrega esta línea
+        modalType: '',
+        selectedType: '',
         form: {
             name: '',
-            type: '',
+            type_id: '',
+            type_name: '',
             input: '',
             instructions: '',
             temperature: 0,
         },
+        types: [],
     };
 
     handleOpenModal = () => {
@@ -64,7 +68,7 @@ class editPrompt extends Component {
                 <div className="flex-1 px-12 my-12">
                     <div className="content-ce">
 
-                    <div className="bg-white p-5 rounded-lg lg:rounded-l-none content-center flex">
+                        <div className="bg-white p-5 rounded-lg lg:rounded-l-none content-center flex">
                             {/* Sección 1: Edit */}
                             <div className="bg-white border-b dark:bg-gray-900 dark:border-gray-700 flex-1">
                                 <a href="./editPrompt" className="w-full h-full flex flex-col items-center justify-center">
@@ -145,7 +149,7 @@ class editPrompt extends Component {
                                 </tbody>
                             </table>
                         </div>
-                        
+
                         {showEditModal && (
                             <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
                                 <div className="bg-white rounded-lg p-8" style={{ width: '500px', height: 'auto', position: 'relative', zIndex: 1 }}>

@@ -1,12 +1,11 @@
+require('dotenv').config();
+
 const express = require('express');
 const app = express();
 // database connection
 const mongoose = require("mongoose");
-const db = mongoose.connect("mongodb://127.0.0.1:27017/prompts", {
-  useNewUrlParser: true,
-  useFindAndModify: false,
-  useUnifiedTopology: true
-});
+const db = mongoose.connect(process.env.DB_CONNECTION_STRING);
+
 
 
 //const Role = require("./models/role");
@@ -24,6 +23,13 @@ const {
   categoryPost, 
   categoryGet
 } = require("./controllers/typeController.js");
+
+// Prompts
+
+const {
+  promptImagePost, 
+  getAllPromptImages
+} = require("./controllers/promptImageController.js");
 
 
 // Rols
@@ -187,6 +193,10 @@ app.get("/api/status", statusGet);
 // Categories
 app.get("/api/categories", categoryGet);
 app.post("/api/categories", categoryPost);
+
+//Prompts
+app.get("/api/imagePrompt", getAllPromptImages)
+app.post("/api/imagePrompt", promptImagePost)
 
 // User
 app.post("/api/user", userPost);

@@ -10,7 +10,7 @@ class imagesPrompt extends Component {
 
     state = {
         showModal: false, // Estado para controlar la apertura y cierre del modal principal
-        showEditModal: false, // Estado para controlar la apertura y cierre del modal de edición
+        showImagesModal: false, // Estado para controlar la apertura y cierre del modal de edición
         form: {
             name: '',
             type: '',
@@ -20,20 +20,12 @@ class imagesPrompt extends Component {
         },
     };
 
-    handleOpenModal = () => {
-        this.setState({ showModal: true });
+    handleOpenImageModal = () => {
+        this.setState({ showImagesModal: true });
     };
 
-    handleCloseModal = () => {
-        this.setState({ showModal: false });
-    };
-
-    handleOpenEditModal = () => {
-        this.setState({ showEditModal: true });
-    };
-
-    handleCloseEditModal = () => {
-        this.setState({ showEditModal: false });
+    handleCloseImagesModal = () => {
+        this.setState({ showImagesModal: false });
     };
 
     handleInputChange = (e) => {
@@ -53,7 +45,7 @@ class imagesPrompt extends Component {
     };
 
     render() {
-        const { showModal, showEditModal } = this.state;
+        const { showModal, showImagesModal } = this.state;
         return (
 
             <div className="flex">
@@ -64,7 +56,7 @@ class imagesPrompt extends Component {
                 <div className="flex-1 px-12 my-12">
                     <div className="content-ce">
 
-                    <div className="bg-white p-5 rounded-lg lg:rounded-l-none content-center flex">
+                        <div className="bg-white p-5 rounded-lg lg:rounded-l-none content-center flex">
                             {/* Sección 1: Edit */}
                             <div className="bg-white border-b dark:bg-gray-900 dark:border-gray-700 flex-1">
                                 <a href="./editPrompt" className="w-full h-full flex flex-col items-center justify-center">
@@ -124,14 +116,14 @@ class imagesPrompt extends Component {
                                             <button
                                                 className="font-medium text-yellow-600 dark:text-yellow-500 hover:underline ml-2"
                                                 title="New"
-                                                onClick={this.handleOpenModal} // Agregamos el evento onClick para abrir el modal
+                                                onClick={this.handleOpenImageModal} // Agregamos el evento onClick para abrir el modal
                                             >
                                                 <img className="w-6 h-6" src={AddImage} alt="user photo" />
                                             </button>
                                             <button
                                                 className="font-medium text-yellow-600 dark:text-yellow-500 hover:underline ml-2"
                                                 title="Edit"
-                                                onClick={this.handleOpenEditModal} // Agregamos el evento onClick para abrir el modal de edición
+                                                onClick={this.handleOpenImageModal} // Agregamos el evento onClick para abrir el modal de edición
                                             >
                                                 <img className="w-6 h-6" src={EditImage} alt="user photo" />
                                             </button>
@@ -145,21 +137,99 @@ class imagesPrompt extends Component {
                                 </tbody>
                             </table>
                         </div>
-                        
-                        {showEditModal && (
+
+                        {showImagesModal && (
                             <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
                                 <div className="bg-white rounded-lg p-8" style={{ width: '500px', height: 'auto', position: 'relative', zIndex: 1 }}>
                                     {/* Contenido del modal de edición */}
-                                    <h3 className="text-2xl font-semibold mb-6">Editing Prompt </h3>
-                                    <button
-                                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
-                                        onClick={this.handleCloseEditModal} // Agregamos el evento onClick para cerrar el modal de edición
-                                    >
-                                        Close
-                                    </button>
+                                    <h3 className="text-2xl font-semibold mb-6">Image Prompt</h3>
+                                    <div className="grid grid-cols-2 gap-4 mb-6">
+                                        <div className="col-span-1">
+                                            <label htmlFor="name" className="block font-medium mb-1">
+                                                Name<span className="text-red-500">*</span>
+                                            </label>
+                                            <input
+                                                id="name"
+                                                name="name"
+                                                type="text"
+                                                className="w-full border rounded-md px-3 py-2"
+                                                required
+                                            />
+                                        </div>
+                                        <div className="col-span-1">
+                                            <label htmlFor="type" className="block font-medium mb-1">
+                                                Type:
+                                            </label>
+                                            <select
+                                                id="type"
+                                                name="type"
+                                                className="w-full border rounded-md px-3 py-2"
+                                                defaultValue="image"
+                                                disabled
+                                            >
+                                                <option value="image">Image</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="input" className="block font-medium mb-1">
+                                            Input<span className="text-red-500">*</span>
+                                        </label>
+                                        <textarea
+                                            id="input"
+                                            name="input"
+                                            className="w-full border rounded-md px-3 py-2"
+                                            required
+                                        ></textarea>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="instructions" className="block font-medium mb-1">
+                                            Instructions<span className="text-red-500">*</span>
+                                        </label>
+                                        <textarea
+                                            id="instructions"
+                                            name="instructions"
+                                            className="w-full border rounded-md px-3 py-2"
+                                            required
+                                        ></textarea>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="col-span-1">
+                                            <label htmlFor="number" className="block font-medium mb-1">
+                                                Number
+                                            </label>
+                                            <input
+                                                id="number"
+                                                name="number"
+                                                type="number"
+                                                className="w-full border rounded-md px-3 py-2"
+                                                style={{ width: '100%' }}
+                                            />
+                                        </div>
+                                        <div className="col-span-1"></div>
+                                    </div>
+                                    <div className="flex justify-end mt-6">
+                                        <button
+                                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600 mr-2"
+                                            onClick={this.handleSave}
+                                        >
+                                            Save
+                                        </button>
+                                        <button
+                                            className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 focus:outline-none focus:bg-gray-600"
+                                            onClick={this.handleCloseImagesModal}
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         )}
+
+
+
+
+
                     </div>
                 </div>
 
