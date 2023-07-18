@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { getCategories } from "../services/typeStervice";
+import { getCategories } from "../services/typeService";
 import Navbar from "../comun/navbar";
 import Sliderbar from '../comun/sliderbar';
 

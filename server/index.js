@@ -28,7 +28,9 @@ const {
 
 const {
   promptImagePost, 
-  getAllPromptImages
+  getAllPromptImages,
+  deletePromptImage,
+  patchPromptImage,
 } = require("./controllers/promptImageController.js");
 
 
@@ -195,8 +197,10 @@ app.get("/api/categories", categoryGet);
 app.post("/api/categories", categoryPost);
 
 //Prompts
-app.get("/api/imagePrompt", getAllPromptImages)
-app.post("/api/imagePrompt", promptImagePost)
+app.get("/api/imagePrompt", getAllPromptImages);
+app.post("/api/imagePrompt", promptImagePost);
+app.delete("/api/imagePrompt/:id", deletePromptImage);
+app.patch("/api/imagePrompt/:id", patchPromptImage);
 
 // User
 app.post("/api/user", userPost);

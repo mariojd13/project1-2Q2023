@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Navbar from "../comun/navbar";
-import { getCategories } from '../services/typeStervice';
+import { getCategories } from '../services/typeService';
 
 class addImagePrompt extends Component {
   state = {

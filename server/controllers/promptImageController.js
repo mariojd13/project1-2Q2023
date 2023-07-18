@@ -126,6 +126,51 @@ const getAllPromptImages = async (req, res) => {
   }
 };
 
+const deletePromptImage = async (req, res) => {
+  try {
+    const imagesId = req.params.id;
+
+    // find the Images by ID and delete it
+    const result = await PromptImage.findByIdAndDelete(imagesId);
+
+    if (!result) {
+      return res.status(404).json({ msg: 'Images not found' });// //not found
+    }
+
+    return res.json({ msg: 'Images deleted successfully' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ msg: 'Internal server error' });
+  }
+};
+
+const patchPromptImage = async (req, res) => {
+  const imageId = req.params.id;
+
+  try {
+    const promptImage = await PromptImage.findById(imageId).exec();
+
+    if (!promptImage) {
+      res.status(404).json({ error: "Image doesn't exist" });
+      return;
+    }
+
+    promptImage.name = req.body.name || promptImage.name;
+    promptImage.prompt = req.body.prompt || promptImage.prompt;
+    promptImage.size = req.body.size || promptImage.size;
+    promptImage.n = req.body.n || promptImage.n;
+
+    await promptImage.save();
+
+    res.status(200).json(promptImage);
+  } catch (error) {
+    console.log('Error while querying or saving the Image', error);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+};
+
+
+
 
 
 
@@ -133,5 +178,7 @@ const getAllPromptImages = async (req, res) => {
   module.exports = {
     executePrompt,
     promptImagePost,
+    deletePromptImage,
+    patchPromptImage,
     getAllPromptImages
   }
