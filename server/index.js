@@ -31,6 +31,7 @@ const {
   getAllPromptImages,
   deletePromptImage,
   patchPromptImage,
+  postSimpleImagePrompt,
 } = require("./controllers/promptImageController.js");
 
 
@@ -199,6 +200,7 @@ app.post("/api/categories", categoryPost);
 //Prompts
 app.get("/api/imagePrompt", getAllPromptImages);
 app.post("/api/imagePrompt", promptImagePost);
+app.post("/api/simpleImagePrompt", postSimpleImagePrompt);
 app.delete("/api/imagePrompt/:id", deletePromptImage);
 app.patch("/api/imagePrompt/:id", patchPromptImage);
 

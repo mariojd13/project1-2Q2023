@@ -1,6 +1,7 @@
 const { Configuration, OpenAIApi } = require("openai");
 
 const PromptImage = require("../models/promptModel");
+const Category = require("../models/categoryModel");
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_KEY,
@@ -169,6 +170,49 @@ const patchPromptImage = async (req, res) => {
   }
 };
 
+const postSimpleImagePrompt = async (req, res) => {
+  var promptImage = new PromptImage();
+
+  const category = await Category.findById(req.body.category_id) 
+  
+  // Set Image data
+  promptImage.name = req.body.name;
+  promptImage.prompt = req.body.prompt;
+  promptImage.size = req.body.size;
+  promptImage.n = req.body.n;
+  promptImage.category = category;
+
+  if (promptImage.name
+    && promptImage.prompt
+    && promptImage.size
+    && promptImage.n
+    && promptImage.category
+
+  ) {// If all required data is provided
+    try {
+      await promptImage.save();
+      res.status(201);//CREATED
+      console.log('Image create OK');
+      res.header({
+        'location': `http://localhost:3001/simpleImagePrompt/?id=${promptImage.id}`
+      });
+      res.json(promptImage);
+    } catch (err) {
+      res.status(422);//unprocessable entity
+      console.log('Error while saving the Image', err);
+      res.json({
+        error: 'There was an error saving the Image'
+      });
+    }
+  } else {
+    res.status(422);//unprocessable entity
+    console.log('No valid data provided for Image')
+    res.json({
+      error: 'No valid data provided for Image'
+    });
+  }
+};
+
 
 
 
@@ -180,5 +224,6 @@ const patchPromptImage = async (req, res) => {
     promptImagePost,
     deletePromptImage,
     patchPromptImage,
+    postSimpleImagePrompt,
     getAllPromptImages
   }
