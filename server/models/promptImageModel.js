@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 //const User = require('../models/userModel');
-const Category = require('../models/categoryModel');
+const Category = require('./categoryModel');
 
 const promptImageModel = new Schema({
 

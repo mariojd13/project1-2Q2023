@@ -24,7 +24,7 @@ const {
   categoryGet
 } = require("./controllers/typeController.js");
 
-// Prompts
+// Prompts Image
 
 const {
   promptImagePost, 
@@ -33,6 +33,16 @@ const {
   patchPromptImage,
   postSimpleImagePrompt,
 } = require("./controllers/promptImageController.js");
+
+// Prompts Edit
+
+const {
+  promptEditPost, 
+  getAllPromptEdit,
+  // deletePromptImage,
+  // patchPromptImage,
+  // postSimpleImagePrompt,
+} = require("./controllers/promptEditController.js");
 
 
 // Rols
@@ -197,13 +207,16 @@ app.get("/api/status", statusGet);
 app.get("/api/categories", categoryGet);
 app.post("/api/categories", categoryPost);
 
-//Prompts
+//Prompts Image
 app.get("/api/imagePrompt", getAllPromptImages);
 app.post("/api/imagePrompt", promptImagePost);
 app.post("/api/simpleImagePrompt", postSimpleImagePrompt);
 app.delete("/api/imagePrompt/:id", deletePromptImage);
 app.patch("/api/imagePrompt/:id", patchPromptImage);
 
+//Prompts Edit
+app.post("/api/editPrompt", promptEditPost);
+app.get("/api/editPrompt", getAllPromptEdit);
 // User
 app.post("/api/user", userPost);
 app.get("/api/user", userGet);

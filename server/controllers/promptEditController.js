@@ -1,6 +1,6 @@
 const { Configuration, OpenAIApi } = require("openai");
 
-const PromptImage = require("../models/promptImageModel");
+const PromptEdit = require("../models/promptEditModel");
 const Category = require("../models/categoryModel");
 
 const configuration = new Configuration({
@@ -43,91 +43,82 @@ const executePrompt = async (req, res) => {
 // }
 
 
-const promptImagePost = async (req, res) => {
+const promptEditPost = async (req, res) => {
   try {
     const { OpenAIApi } = require("openai");
     const openai = new OpenAIApi(configuration);
 
-    const response = await openai.createImage({
-      prompt: req.body.prompt,
-      n: req.body.n,
-      size: req.body.size,
+    // Define el modelo que deseas utilizar
+    const model = "text-davinci-edit-001";
+
+    // Define el input de acuerdo a los datos del body
+    const input = req.body.input;
+
+    // Define la instrucción que se enviará como parámetro
+    const instruction = req.body.instruction;
+
+    // Llamada a la API de OpenAI para obtener la respuesta
+    const response = await openai.createEdit({
+      model: model,
+      input: input,
+      instruction: instruction, // Envía la instrucción como parte de los parámetros
     });
-    console.log(response.data);
-    if (response) {
-      const promptImage = new PromptImage({
-        name: req.body.name,
-        prompt: req.body.prompt,
-        response: JSON.stringify(response.data), // Convertir a cadena JSON
-        n: req.body.n,
-        size: req.body.size,
-      });
 
-      if (
-        response.data &&
-        response.data.url &&
-        Array.isArray(response.data.url) &&
-        response.data.url.length >= 2
-      ) {
-        promptImage.url1 = response.data[0].url1;
-        promptImage.url2 = response.data[1].url2;
-      } else {
-        // Manejar el caso en el que la estructura no sea la esperada
-        console.log('Invalid data structure for image URL');
-      }
+    // Obtén el texto de la respuesta editada
+    const editedText = response.data.choices[0].text;
 
-      try {
-        await promptImage.save();
-        console.log('Image created successfully');
-        res.header({
-          'location': `http://localhost:3001/imagePrompt/?id=${promptImage.id}`
-        });
-        res.json(promptImage);
-      } catch (err) {
-        res.status(422);
-        console.log('Error while saving the image', err);
-        res.json({
-          error: 'There was an error saving the image'
-        });
+    // Crea el objeto de respuesta con el formato deseado
+    const responseObject = {
+      object: "edit",
+      created: Math.floor(Date.now() / 1000),
+      choices: [
+        {
+          text: editedText,
+          index: 0,
+        }
+      ],
+      usage: {
+        "prompt_tokens": 25,
+        "completion_tokens": 32,
+        "total_tokens": 57
       }
-    } else {
-      res.status(422);
-      console.log('No valid data provided for image');
-      res.json({
-        error: 'No valid data provided for image'
-      });
-    }
+    };
+
+    const promptEditData = new PromptEdit({
+      name: req.body.name, // Asegúrate de que req.body.name esté disponible en el body
+      input: input,
+      instruction: instruction,
+      response: JSON.stringify(responseObject), // Convierte el objeto en una cadena JSON antes de guardar
+    });
+    await promptEditData.save();
+
+    // Agrega la ubicación a la respuesta
+    res.set('location', `http://localhost:3001/editPrompt/?id=${promptEditData._id}`);
+
+    // Envía la respuesta
+    res.json(responseObject);
+
   } catch (err) {
-    console.log('Error while creating prompt image:', err);
+    console.log('Error while editing text:', err.message);
     res.status(500).json({
-      error: 'There was an error creating the prompt image'
+      error: 'There was an error editing text'
     });
   }
 };
 
-// const getAllPromptImages = async (req, res) => {
-//   try {
-//     const promptImages = await PromptImage.find();
-//     res.json(promptImages);
-//   } catch (err) {
-//     console.log('Error while retrieving prompt images:', err);
-//     res.status(500).json({
-//       error: 'There was an error retrieving prompt images'
-//     });
-//   }
-// };
 
-const getAllPromptImages = async (req, res) => {
+
+const getAllPromptEdit = async (req, res) => {
   try {
-    const promptImages = await PromptImage.find({}).exec();
-    res.json(promptImages);
+    const promptEditText = await PromptEdit.find({}).exec();
+    res.json(promptEditText);
   } catch (err) {
     res.status(500).json({ error: 'Internal server error' });
     console.log('Error while querying the Prompt Image', err);
   }
 };
 
-const deletePromptImage = async (req, res) => {
+const deleteEditImage = async (req, res) => {
   try {
     const imagesId = req.params.id;
 
@@ -145,7 +136,7 @@ const deletePromptImage = async (req, res) => {
   }
 };
 
-const patchPromptImage = async (req, res) => {
+const patchPromptEdit = async (req, res) => {
   const imageId = req.params.id;
 
   try {
@@ -170,11 +161,11 @@ const patchPromptImage = async (req, res) => {
   }
 };
 
-const postSimpleImagePrompt = async (req, res) => {
+const postSimpleEditPrompt = async (req, res) => {
   var promptImage = new PromptImage();
 
-  const category = await Category.findById(req.body.category_id) 
-  
+  const category = await Category.findById(req.body.category_id)
+
   // Set Image data
   promptImage.name = req.body.name;
   promptImage.prompt = req.body.prompt;
@@ -219,11 +210,11 @@ const postSimpleImagePrompt = async (req, res) => {
 
 
 
-  module.exports = {
-    executePrompt,
-    promptImagePost,
-    deletePromptImage,
-    patchPromptImage,
-    postSimpleImagePrompt,
-    getAllPromptImages
-  }
+module.exports = {
+  executePrompt,
+  promptEditPost,
+  deleteEditImage,
+  patchPromptEdit,
+  postSimpleEditPrompt,
+  getAllPromptEdit
+}
