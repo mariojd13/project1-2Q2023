@@ -41,7 +41,7 @@ const {
   getAllPromptEdit,
   // deletePromptImage,
   // patchPromptImage,
-  // postSimpleImagePrompt,
+  postSimpleEditPrompt,
 } = require("./controllers/promptEditController.js");
 
 
@@ -217,6 +217,7 @@ app.patch("/api/imagePrompt/:id", patchPromptImage);
 //Prompts Edit
 app.post("/api/editPrompt", promptEditPost);
 app.get("/api/editPrompt", getAllPromptEdit);
+app.post("/api/simpleEditPrompt", postSimpleEditPrompt);
 // User
 app.post("/api/user", userPost);
 app.get("/api/user", userGet);

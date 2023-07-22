@@ -37,7 +37,6 @@ name: {
   },
   response: {
     type: String,
-    required: true,
   },
 });
 

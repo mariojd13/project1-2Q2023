@@ -6,33 +6,33 @@ import DeleteImage from '../images/delete.png';
 import AddImage from '../images/new.png';
 import PlayImage from '../images/play.png';
 
-import { getPromptImages, updateImagePrompts, deleteImagePrompts, createImagePrompt } from '../services/imagePromptService';
+import { getPromptEdits, updateEditPrompts, deleteEditPrompts, createEditPrompt } from '../services/editPromptService';
 import { getCategories } from '../services/typeService';
 
 
-class imagesPrompt extends Component {
+class editsPrompt extends Component {
     state = {
         data: [],
         form: {
             name: '',
-            category_id: 'image',
-            Prompt: '',
-            number: '',
-            size: '',
+            category_id: 'edit',
+            input: '',
+            //number: '',
+            //size: '',
         },
         categories: [],
-        selectedImagePrompt: null,
-        showImagesModal: false,
+        selectedEditPrompt: null,
+        showEditsModal: false,
     };
 
     componentDidMount() {
-        this.getPromptImages();
+        this.getPromptEdits();
         this.getCategories();
     }
 
-    getPromptImages = async () => {
+    getPromptEdits = async () => {
         try {
-            const { data, error } = await getPromptImages();
+            const { data, error } = await getPromptEdits();
             if (!error) {
                 this.setState({ data });
             } else {
@@ -55,44 +55,44 @@ class imagesPrompt extends Component {
         }
     }
 
-    handleOpenImageModal = (promptImage) => {
-        const { name, prompt, n, size } = promptImage;
+    handleOpenEditModal = (promptEdit) => {
+        const { name, input, n, size } = promptEdit;
         this.setState({
-            showImagesModal: true,
-            selectedImagePrompt: promptImage,
+            showEditsModal: true,
+            selectedEditPrompt: promptEdit,
             form: {
                 name,
-                prompt,
+                input,
                 category_id: "image",
-                n,
-                size,
+                //n,
+                //size,
             },
             initialForm: {
                 name,
-                prompt,
+                input,
                 category_id: "image",
-                n,
-                size,
+                //n,
+                //size,
             },
         });
     };
 
-    handleOpenNewImageModal = () => {
+    handleOpenNewEditModal = () => {
         this.setState({
-            showNewImagesModal: true,
+            showNewEditsModal: true,
             form: {
                 name: '',
-                type: 'image',
-                prompt: '',
-                n: '',
-                size: '256x256',
+                type: 'edit',
+                input: '',
+                //n: '',
+                //size: '256x256',
             },
             initialForm: {
                 name: '',
-                type: 'image',
-                prompt: '',
-                n: '',
-                size: '256x256',
+                type: 'edit',
+                input: '',
+                //n: '',
+                //size: '256x256',
             },
         });
     };
@@ -101,44 +101,44 @@ class imagesPrompt extends Component {
 
 
 
-    handleEditImagePrompt = async (e) => {
-        e.preventDefault();
-        const { selectedImagePrompt, form } = this.state;
-        const updatedImagePrompt = {
-            ...selectedImagePrompt,
-            ...form,
-            number: form.number,
-        };
+    // handleEditEditPrompt = async (e) => {
+    //     e.preventDefault();
+    //     const { selectedEditPrompt, form } = this.state;
+    //     const updatedEditPrompt = {
+    //         ...selectedEditPrompt,
+    //         ...form,
+    //         number: form.number,
+    //     };
 
-        const confirmation = window.confirm(
-            `¿Está seguro que desea guardar los cambios para el prompt: ${selectedImagePrompt.name}?`
-        );
+    //     const confirmation = window.confirm(
+    //         `¿Está seguro que desea guardar los cambios para el prompt: ${selectedEditPrompt.name}?`
+    //     );
 
-        if (confirmation) {
-            try {
-                const { error, data } = await updateImagePrompts(updatedImagePrompt);
-                if (data && !error) {
-                    console.log("Prompt Image updated:", data);
-                    const updatedData = this.state.data.map((selectedImagePrompt) => {
-                        if (selectedImagePrompt._id === data._id) {
-                            return data;
-                        }
-                        return selectedImagePrompt;
-                    });
+    //     if (confirmation) {
+    //         try {
+    //             const { error, data } = await updateEditPrompts(updatedEditPrompt);
+    //             if (data && !error) {
+    //                 console.log("Prompt Edit updated:", data);
+    //                 const updatedData = this.state.data.map((selectedEditPrompt) => {
+    //                     if (selectedEditPrompt._id === data._id) {
+    //                         return data;
+    //                     }
+    //                     return selectedEditPrompt;
+    //                 });
 
-                    this.setState({ data: updatedData });
-                    this.handleCloseImagesModal();
-                }
-            } catch (error) {
-                console.log(error);
-            }
-        }
-    };
+    //                 this.setState({ data: updatedData });
+    //                 this.handleCloseEditsModal();
+    //             }
+    //         } catch (error) {
+    //             console.log(error);
+    //         }
+    //     }
+    // };
 
 
-    handleCloseImagesModal = () => {
-        this.setState({ showImagesModal: false });
-        this.setState({ showNewImagesModal: false });
+    handleCloseEditsModal = () => {
+        this.setState({ showEditsModal: false });
+        this.setState({ showNewEditsModal: false });
     };
 
     handleInputChange = (e) => {
@@ -151,11 +151,11 @@ class imagesPrompt extends Component {
         }));
     };
 
-    handleDeleteImagePrompt = async (promptImage) => {
-        const confirmation = window.confirm(`¿Está seguro que desea el siguiente prompt de: ${promptImage.name}?`);
+    handleDeleteEditPrompt = async (promptEdit) => {
+        const confirmation = window.confirm(`¿Está seguro que desea el siguiente prompt de: ${promptEdit.name}?`);
         if (confirmation) {
             try {
-                const { error, msg } = await deleteImagePrompts(promptImage._id);
+                const { error, msg } = await deleteEditPrompts(promptEdit._id);
                 if (!error) {
                     alert(msg);
                     // Refrescar la página para mostrar los cambios actualizados
@@ -181,28 +181,31 @@ class imagesPrompt extends Component {
         }));
     };
 
-    postImagePrompt = async (e) => {
-        e.preventDefault();
+    postEditPrompt = async (e) => {
+        //const { form } = this.state;
+        
+        // e.preventDefault();
 
-        this.setState({ isLoading: true });
+        // this.setState({ isLoading: true });
 
         const form = {
             name: e.target.elements.name.value,
-            category_id: '64a6312af8d7595ee0acf85d', // Type Image
-            prompt: e.target.elements.prompt.value,
-            size: e.target.elements.size.value,
-            n: e.target.elements.n.value,
+            category_id: '64a6313cf8d7595ee0acf85f', // Type Image
+            input: e.target.elements.input.value,
+            instruction: e.target.elements.instruction.value,
+            //size: e.target.elements.size.value,
+            //n: e.target.elements.n.value,
         };
 
         console.log("form.category_id");
         console.log(form.category_id);
 
-        const result = await createImagePrompt(form);
+        const result = await createEditPrompt(form);
 
         if (!result.error) {
             this.setState({ isLoading: false });
             alert("Se ha registrado correctamente");
-            window.location.href = "./imagePrompt";
+            window.location.href = "./editPrompt";
         }
     };
 
@@ -214,7 +217,7 @@ class imagesPrompt extends Component {
     };
 
     render() {
-        const { showImagesModal, showNewImagesModal, selectedImagePrompt, form } = this.state;
+        const { showEditsModal, showNewEditsModal, selectedEditPrompt, form } = this.state;
         return (
 
             <div className="flex">
@@ -258,7 +261,7 @@ class imagesPrompt extends Component {
                             <button
                                 className="font-medium text-yellow-600 dark:text-yellow-500 hover:underline mt-2"
                                 title="New"
-                                onClick={this.handleOpenNewImageModal} // Llama a la función postImagePrompt al hacer clic
+                                onClick={this.handleOpenNewEditModal} // Llama a la función postImagePrompt al hacer clic
                             >
                                 <img className="w-6 h-6" src={AddImage} alt="user photo" />
                             </button>
@@ -278,25 +281,21 @@ class imagesPrompt extends Component {
                                             Prompt
                                         </th>
                                         <th scope="col" className="px-6 py-3">
-                                            Num Images
-                                        </th>
-                                        <th scope="col" className="px-6 py-3">
                                             Action
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {this.state.data.map((promptImage) => (
-                                        <tr key={promptImage._id}>
-                                            <td className="px-6 py-4">{promptImage.name}</td>
-                                            <td className="px-6 py-4">{promptImage.category && promptImage.category.name}</td>
-                                            <td className="px-6 py-4">{promptImage.prompt}</td>
-                                            <td className="px-6 py-4">{promptImage.n}</td>
+                                    {this.state.data.map((promptEdit) => (
+                                        <tr key={promptEdit._id}>
+                                            <td className="px-6 py-4">{promptEdit.name}</td>
+                                            <td className="px-6 py-4">{promptEdit.category && promptEdit.category.name}</td>
+                                            <td className="px-6 py-4">{promptEdit.prompt}</td>
                                             <td className="px-6 py-4">
                                                 <button
                                                     className="font-medium text-yellow-600 dark:text-yellow-500 hover:underline ml-2"
                                                     title="Run"
-                                                    onClick={this.handleOpenImageModal} // Agregamos el evento onClick para abrir el modal
+                                                    onClick={this.handleOpenEditModal} // Agregamos el evento onClick para abrir el modal
                                                 >
                                                     <img className="w-6 h-6" src={PlayImage} alt="user photo" />
                                                 </button>
@@ -304,13 +303,13 @@ class imagesPrompt extends Component {
                                                 <button
                                                     className="font-medium text-yellow-600 dark:text-yellow-500 hover:underline ml-2"
                                                     title="Edit"
-                                                    onClick={() => this.handleOpenImageModal(promptImage)}
+                                                    onClick={() => this.handleOpenEditModal(promptEdit)}
                                                 >
                                                     <img className="w-6 h-6" src={EditImage} alt="user photo" />
                                                 </button>
                                                 <button
                                                     className="font-medium text-yellow-600 dark:text-yellow-500 hover:underline ml-2"
-                                                    onClick={() => this.handleDeleteImagePrompt(promptImage)}
+                                                    onClick={() => this.handleDeleteEditPrompt(promptEdit)}
                                                 >
                                                     <img className="w-6 h-6" src={DeleteImage} alt="user photo" />
                                                 </button>
@@ -321,11 +320,11 @@ class imagesPrompt extends Component {
                             </table>
                         </div>
 
-                        {showImagesModal && selectedImagePrompt && (
+                        {showEditsModal && selectedEditPrompt && (
                             <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
                                 <div className="bg-white rounded-lg p-8" style={{ width: '500px', height: 'auto', position: 'relative', zIndex: 1 }}>
                                     {/* Contenido del modal de edición */}
-                                    <h3 className="text-2xl font-semibold mb-6">Editing Image Prompt</h3>
+                                    <h3 className="text-2xl font-semibold mb-6">Editing Prompt</h3>
                                     <div className="grid grid-cols-2 gap-4 mb-6">
                                         <div className="col-span-1">
                                             <label htmlFor="name" className="block font-medium mb-1">
@@ -352,133 +351,118 @@ class imagesPrompt extends Component {
                                                 defaultValue="image"
                                                 disabled
                                             >
-                                                <option value="image">Image</option>
+                                                <option value="Edit">Edit</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div>
-                                        <label htmlFor="prompt" className="block font-medium mb-1">
-                                            Prompt<span className="text-red-500"> *</span>
+                                        <label htmlFor="input" className="block font-medium mb-1">
+                                            Input<span className="text-red-500"> *</span>
                                         </label>
-                                        <textarea
-                                            id="prompt"
-                                            name="prompt"
+                                        <input
+                                            id="input"
+                                            name="input"
+                                            type="text"
                                             className="w-full border rounded-md px-3 py-2"
                                             required
-                                            value={form.prompt} // Agrega el atributo value para enlazarlo con el estado
-                                            onChange={this.handleInputChange} // Agrega el evento onChange para actualizar el estado
-                                        ></textarea>
+                                            value={form.input}
+                                            onChange={this.handleInputChange}
+                                        />
                                     </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="col-span-1">
-                                            <label htmlFor="n" className="block font-medium mb-1">
-                                                Number<span className="text-red-500"> *</span>
-                                            </label>
-                                            <input
-                                                id="n"
-                                                name="n"
-                                                type="number" // Cambiar el tipo a "number"
-                                                className="w-full border rounded-md px-3 py-2"
-                                                value={form.n}
-                                                onChange={this.handleInputChange} // Agregar el evento onChange para actualizar el estado
-                                                style={{ width: '100%' }}
-                                                min="1"
-                                                max="2"
-                                                step="1"
-                                            />
-                                        </div>
-                                        <div className="col-span-1">
-                                            <label htmlFor="size" className="block font-medium mb-1">
-                                                Size:<span className="text-red-500"> *</span>
-                                            </label>
-                                            <select
-                                                id="size"
-                                                name="size"
-                                                className="w-full border rounded-md px-3 py-2"
-                                                value={form.size}
-                                                onChange={this.handleSizeChange} // Agrega el evento onChange para actualizar el estado
-                                            >
-                                                <option value="256x256">256x256</option>
-                                                <option value="512x512">512x512</option>
-                                                <option value="1024x1024">1024x1024</option>
-                                            </select>
-                                        </div>
-                                        <div className="col-span-1"></div>
+                                    <div>
+                                        <label htmlFor="instruction" className="block font-medium mb-1">
+                                            Instruction<span className="text-red-500"> *</span>
+                                        </label>
+                                        <textarea
+                                            id="instruction"
+                                            name="instruction"
+                                            className="w-full border rounded-md px-3 py-2"
+                                            required
+                                            value={form.instruction}
+                                            onChange={this.handleInputChange}
+                                        ></textarea>
                                     </div>
                                     <div className="flex justify-end mt-6">
                                         <button
                                             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600 mr-2"
-                                            onClick={this.handleEditImagePrompt}
+                                            onClick={this.handleEditEditPrompt}
                                         >
                                             Save
                                         </button>
                                         <button
                                             className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 focus:outline-none focus:bg-gray-600"
-                                            onClick={this.handleCloseImagesModal}
+                                            onClick={this.handleCloseEditsModal}
                                         >
                                             Cancel
                                         </button>
                                     </div>
                                 </div>
+
                             </div>
                         )}
-                        {showNewImagesModal && (
+                        {showNewEditsModal && (
                             <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
+
                                 <div className="bg-white rounded-lg p-8" style={{ width: '500px', height: 'auto', position: 'relative', zIndex: 1 }}>
-                                    {/* Contenido del modal de creación */}
-                                    <form onSubmit={this.postImagePrompt}>
-                                        <h3 className="text-2xl font-semibold mb-6">Adding New Image Prompt</h3>
+                                    {/* Contenido del modal de edición */}
+                                    <form onSubmit={this.postEditPrompt}>
+                                        <h3 className="text-2xl font-semibold mb-6">Editing Prompt</h3>
                                         <div className="grid grid-cols-2 gap-4 mb-6">
                                             <div className="col-span-1">
                                                 <label htmlFor="name" className="block font-medium mb-1">
                                                     Name<span className="text-red-500"> *</span>
                                                 </label>
-                                                <input id="name" name="name" type="text" className="w-full border rounded-md px-3 py-2" required value={form.name} onChange={this.handleInputChange} />
+                                                <input
+                                                    id="name"
+                                                    name="name"
+                                                    type="text"
+                                                    className="w-full border rounded-md px-3 py-2"
+                                                    required
+                                                    value={form.name}
+                                                    onChange={this.handleInputChange}
+                                                />
                                             </div>
                                             <div className="col-span-1">
                                                 <label htmlFor="type" className="block font-medium mb-1">
                                                     Type:
                                                 </label>
-                                                <select id="type" name="type" className="w-full border rounded-md px-3 py-2" defaultValue="image" disabled>
-                                                    <option value="image">Image</option>
+                                                <select
+                                                    id="type"
+                                                    name="type"
+                                                    className="w-full border rounded-md px-3 py-2"
+                                                    defaultValue="image"
+                                                    disabled
+                                                >
+                                                    <option value="Edit">Edit</option>
                                                 </select>
                                             </div>
                                         </div>
                                         <div>
-                                            <label htmlFor="prompt" className="block font-medium mb-1">
-                                                Prompt<span className="text-red-500"> *</span>
+                                            <label htmlFor="input" className="block font-medium mb-1">
+                                                Input<span className="text-red-500"> *</span>
                                             </label>
-                                            <textarea id="prompt" name="prompt" className="w-full border rounded-md px-3 py-2" required value={form.prompt} onChange={this.handleInputChange}></textarea>
+                                            <input
+                                                id="input"
+                                                name="input"
+                                                type="text"
+                                                className="w-full border rounded-md px-3 py-2"
+                                                required
+                                                value={form.input}
+                                                onChange={this.handleInputChange}
+                                            />
                                         </div>
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="col-span-1">
-                                                <label htmlFor="n" className="block font-medium mb-1">
-                                                    Number<span className="text-red-500"> *</span>
-                                                </label>
-                                                <input
-                                                    id="n"
-                                                    name="n"
-                                                    type="number" // Cambiar el tipo a "number"
-                                                    className="w-full border rounded-md px-3 py-2"
-                                                    value={form.n}
-                                                    onChange={this.handleInputChange} // Agregar el evento onChange para actualizar el estado
-                                                    style={{ width: '100%' }}
-                                                    min="1"
-                                                    max="2"
-                                                    step="1"
-                                                />
-                                            </div>
-                                            <div className="col-span-1">
-                                                <label htmlFor="size" className="block font-medium mb-1">
-                                                    Size:<span className="text-red-500"> *</span>
-                                                </label>
-                                                <select id="size" name="size" className="w-full border rounded-md px-3 py-2" value={form.size} onChange={this.handleSizeChange}>
-                                                    <option value="256x256">256x256</option>
-                                                    <option value="512x512">512x512</option>
-                                                    <option value="1024x1024">1024x1024</option>
-                                                </select>
-                                            </div>
-                                            <div className="col-span-1"></div>
+                                        <div>
+                                            <label htmlFor="instruction" className="block font-medium mb-1">
+                                                Instruction<span className="text-red-500"> *</span>
+                                            </label>
+                                            <textarea
+                                                id="instruction"
+                                                name="instruction"
+                                                className="w-full border rounded-md px-3 py-2"
+                                                required
+                                                value={form.instruction}
+                                                onChange={this.handleInputChange}
+                                            ></textarea>
                                         </div>
                                         <div className="flex justify-end mt-6">
                                             <button
@@ -489,7 +473,7 @@ class imagesPrompt extends Component {
                                             </button>
                                             <button
                                                 className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 focus:outline-none focus:bg-gray-600"
-                                                onClick={this.handleCloseImagesModal}
+                                                onClick={this.handleCloseEditsModal}
                                             >
                                                 Cancel
                                             </button>
@@ -504,4 +488,4 @@ class imagesPrompt extends Component {
         )
     }
 }
-export default imagesPrompt;
+export default editsPrompt;
