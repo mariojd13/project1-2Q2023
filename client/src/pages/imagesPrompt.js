@@ -8,6 +8,7 @@ import PlayImage from '../images/play.png';
 
 import { getPromptImages, updateImagePrompts, deleteImagePrompts, createImagePrompt } from '../services/imagePromptService';
 import { getCategories } from '../services/typeService';
+import { getSession } from '../services/sessionService';
 
 
 class imagesPrompt extends Component {
@@ -28,6 +29,15 @@ class imagesPrompt extends Component {
     componentDidMount() {
         this.getPromptImages();
         this.getCategories();
+    }
+
+    gettingSession = async () => {
+        this.setState({ isLoading: true });
+        const user=await getSession();
+        
+        //await getRole(user.data.role._id);
+        
+        this.setState({ isLoading: false });
     }
 
     getPromptImages = async () => {

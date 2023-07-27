@@ -118,48 +118,47 @@ const getAllPromptEdit = async (req, res) => {
   }
 };
 
-// const deleteEditImage = async (req, res) => {
-//   try {
-//     const imagesId = req.params.id;
+const deleteEditPrompt = async (req, res) => {
+  try {
+    const editId = req.params.id;
 
-//     // find the Images by ID and delete it
-//     const result = await PromptImage.findByIdAndDelete(imagesId);
+    // find the Images by ID and delete it
+    const result = await PromptEdit.findByIdAndDelete(editId);
 
-//     if (!result) {
-//       return res.status(404).json({ msg: 'Images not found' });// //not found
-//     }
+    if (!result) {
+      return res.status(404).json({ msg: 'Images not found' });// //not found
+    }
 
-//     return res.json({ msg: 'Images deleted successfully' });
-//   } catch (err) {
-//     console.error(err);
-//     return res.status(500).json({ msg: 'Internal server error' });
-//   }
-// };
+    return res.json({ msg: 'Prompt edit deleted successfully' });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ msg: 'Internal server error' });
+  }
+};
 
-// const patchPromptEdit = async (req, res) => {
-//   const imageId = req.params.id;
+const patchPromptEdit = async (req, res) => {
+  const editId = req.params.id;
 
-//   try {
-//     const promptImage = await PromptImage.findById(imageId).exec();
+  try {
+    const promptEdit = await PromptEdit.findById(editId).exec();
 
-//     if (!promptImage) {
-//       res.status(404).json({ error: "Image doesn't exist" });
-//       return;
-//     }
+    if (!promptEdit) {
+      res.status(404).json({ error: "Prompt Edit doesn't exist" });
+      return;
+    }
 
-//     promptImage.name = req.body.name || promptImage.name;
-//     promptImage.prompt = req.body.prompt || promptImage.prompt;
-//     promptImage.size = req.body.size || promptImage.size;
-//     promptImage.n = req.body.n || promptImage.n;
+    promptEdit.name = req.body.name || promptEdit.name;
+    promptEdit.input = req.body.input || promptEdit.input;
+    promptEdit.instruction = req.body.instruction || promptEdit.instruction;
 
-//     await promptImage.save();
+    await promptEdit.save();
 
-//     res.status(200).json(promptImage);
-//   } catch (error) {
-//     console.log('Error while querying or saving the Image', error);
-//     res.status(500).json({ error: 'An error occurred' });
-//   }
-// };
+    res.status(200).json(promptEdit);
+  } catch (error) {
+    console.log('Error while querying or saving the Image', error);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+};
 
 const postSimpleEditPrompt = async (req, res) => {
   var promptEdit = new PromptEdit();
@@ -210,8 +209,8 @@ const postSimpleEditPrompt = async (req, res) => {
 module.exports = {
   executePrompt,
   promptEditPost,
-  // deleteEditImage,
-  // patchPromptEdit,
+  deleteEditPrompt,
+  patchPromptEdit,
   postSimpleEditPrompt,
   getAllPromptEdit
 }

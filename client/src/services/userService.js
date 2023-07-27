@@ -86,4 +86,21 @@ export const updateUsers = async (user) => {
     }
   };
   
+
+  export const loginUser = async (email, password) => {
+    try {
+      const result = await axios.post(`${URL}api/session`, { email, password });
+      if (result.status === 201) {
+        return { error: false, data: result.data.token };
+      }
+      return { error: true, data: null, msg: 'Error interno del servidor' };
+    } catch (error) {
+      if (error && error.response && error.response.data && error.response.data.msg) {
+        return { error: true, data: null, msg: error.response.data.msg };
+      }
+      console.log(error.response);
+      return { error: true, data: null, msg: 'Error interno del servidor' };
+    }
+  };
+  
   

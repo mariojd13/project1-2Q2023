@@ -1,5 +1,10 @@
 require('dotenv').config();
 
+const User = require('./models/userModel');
+const jwt = require("jsonwebtoken");
+
+
+
 const express = require('express');
 const app = express();
 // database connection
@@ -7,27 +12,28 @@ const mongoose = require("mongoose");
 const db = mongoose.connect(process.env.DB_CONNECTION_STRING);
 
 
+const theSecretKey = process.env.JWT_SECRET;
 
-//const Role = require("./models/role");
 
-// const {
-//   base64decode
-// } = require('nodejs-base64');
+//SESSION
 
-const crypto = require('crypto');
+const {
 
+  sessionPost,
+  sessionGet,
+} = require("./controllers/sessionController.js");
 
 // Categories
 
 const {
-  categoryPost, 
+  categoryPost,
   categoryGet
 } = require("./controllers/typeController.js");
 
 // Prompts Image
 
 const {
-  promptImagePost, 
+  promptImagePost,
   getAllPromptImages,
   deletePromptImage,
   patchPromptImage,
@@ -37,10 +43,10 @@ const {
 // Prompts Edit
 
 const {
-  promptEditPost, 
+  promptEditPost,
   getAllPromptEdit,
-  // deletePromptImage,
-  // patchPromptImage,
+  deleteEditPrompt,
+  patchPromptEdit,
   postSimpleEditPrompt,
 } = require("./controllers/promptEditController.js");
 
@@ -86,112 +92,153 @@ app.use(cors({
 }));
 
 
-// login token based
-/**app.post("/api/session", function (req, res, next) {
-  if (req.body.username && req.body.password ) {
-    // validate user
-    if(req.body.username === 'admin' && req.body.password === 'password') {
-      const session = saveSession(req.body.username);
-      session.then(function(session){
-        console.log('session', session);
-        if (!session) {
-          res.status(422);
-          res.json({
-            error: 'There was an error saving the session'
-          });
-        }
-        res.status(201).json({
-          session
-        });
-      })
-    } else {
-      res.status(422);
-      res.json({
-        error: 'Invalid username or password'
-      });
-    }
-  } else {
-    res.status(422);
-    res.json({
-      error: 'Invalid username or password'
-    });
-  }
 
-});
+// // login with JWT
+// app.post("/api/session", async function (req, res) {
+//   const { email, password1 } = req.body;
 
+//   try {
+//     // Buscar al usuario en la base de datos
+//     const user = await User.findOne({ email, password1 });
+//     console.log("User:", user);
 
+//     if (user) {
+//       // Si se encuentra el usuario, generar el token JWT con la información del usuario
+//       const token = jwt.sign(
+//         {
+//           userId: user._id,
+//           name: user.email,
+//           permission: ["create", "edit", "delete"], // Aquí puedes obtener los permisos del usuario desde la base de datos
+//           deviceId: "123",
+//         },
+//         theSecretKey
+//       );
 
-// // Auth basic http
-// app.use(function (req, res, next) {
-//   if (req.headers["authorization"]) {
-//     const authBase64 = req.headers['authorization'].split(' ');
-//     console.log('authBase64:', authBase64);
-//     const userPass = base64decode(authBase64[1]);
-//     console.log('userPass:', userPass);
-//     const user = userPass.split(':')[0];
-//     const password = userPass.split(':')[1];
-
-//     if (user === 'admin' && password == '1234') {
-//       // saveSession('admin');
-//       next();
-//       return;
+//       res.status(201).json({ token });
+//     } else {
+//       res.status(422).json({ error: "Invalid email or password" });
 //     }
+//   } catch (error) {
+//     console.error("Error:", error);
+//     res.status(500).json({ error: "Internal server error" });
 //   }
-//   res.status(401);
-//   res.send({
-//     error: "Unauthorized"
-//   });
 // });
 
-// Token based Auth
-app.use(function (req, res, next) {
-  if (req.headers["authorization"]) {
-    const token = req.headers['authorization'].split(' ')[1];
-    try {
-      //validate if token exists in the database
-      const session = getSession(token);
-      session.then(function (session) {
-        if (session) {
-          next();
-          return;
-        } else {
-          res.status(401);
-          res.send({
-            error: "Unauthorized "
-          });
-        }
-      })
-      .catch(function(err){
-        console.log('there was an error getting the session', err);
-        res.status(422);
-        res.send({
-          error: "There was an error: " + e.message
-        });
-      });
+//back up
 
+
+// login with JWT
+app.post("/api/session", async function (req, res) {
+  const { email, password1 } = req.body;
+
+  try {
+    // Buscar al usuario en la base de datos
+    const user = await User.findOne({ email, password1 });
+    console.log("User:", user);
+
+    if (user) {
+      // Si se encuentra el usuario, generar el token JWT con la información del usuario
+      const token = jwt.sign(
+        {
+          userId: user._id,
+          name: user.email,
+          permission: ["create", "edit", "delete", "read"], // Aquí puedes obtener los permisos del usuario desde la base de datos
+          deviceId: "123",
+        },
+        theSecretKey
+      );
+
+      res.status(201).json({ token });
+    } else {
+      res.status(422).json({ error: "Invalid email or password" });
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+
+
+// // JWT Authentication middleware
+// app.use(function (req, res, next) {
+//   if (req.headers["authorization"]) {
+//     const authToken = req.headers["authorization"].split(" ")[1];
+//     try {
+//       jwt.verify(authToken, theSecretKey, (err, decodedToken) => {
+//         if (err || !decodedToken) {
+//           res.status(401);
+//           res.json({
+//             error: "Unauthorized3",
+//           });
+//         } else {
+//           console.log("Welcome", decodedToken.name);
+//           next();
+//         }
+//       });
+//     } catch (e) {
+//       res.status(401);
+//       res.send({
+//         error: "Unauthorized4",
+//       });
+//     }
+//   } else {
+//     res.status(401);
+//     res.send({
+//       error: "Unauthorized5",
+//     });
+//   }
+// });
+// JWT Authentication middleware
+app.use(function (req, res, next) {
+  if (req.headers["authorization"] && req.headers["authorization"].startsWith("Bearer ")) {
+    const authToken = req.headers["authorization"].substring(7); // Eliminar el prefijo "Bearer " para obtener solo el token
+    try {
+      const decodedToken = jwt.verify(authToken, theSecretKey);
+      console.log("Decoded token:", decodedToken);
+      if (decodedToken) {
+        // El token es válido, se puede acceder a los datos decodificados como decodedToken
+        console.log("Welcome", decodedToken.name);
+        req.user = decodedToken; // Opcional: Puedes guardar los datos del usuario en req.user para usarlos en otras rutas
+        return res.status(200).json({
+          message: "Authentication successful",
+          user: decodedToken // Opcional: Puedes enviar los datos del usuario en la respuesta
+        });
+      } else {
+        console.log("Token is invalid");
+        res.status(401);
+        return res.json({
+          error: "Unauthorized",
+        });
+      }
     } catch (e) {
-      res.status(422);
-      res.send({
-        error: "There was an error: " + e.message
+      console.log("Error while verifying token:", e.message);
+      res.status(401);
+      return res.json({
+        error: "Unauthorized",
       });
     }
   } else {
+    console.log("Authorization header not found or invalid format");
     res.status(401);
-    res.send({
-      error: "Unauthorized "
+    return res.json({
+      error: "Unauthorized",
     });
   }
 });
 
-**/
 
-// listen to the task request
-// app.get("/api/teachers", teacherGet);
-// app.post("/api/teachers", teacherPost);
-// app.patch("/api/teachers", teacherPatch);
-// app.put("/api/teachers", teacherPatch);
-// app.delete("/api/teachers", teacherDelete);
 
+
+
+
+
+
+//SESSIION
+
+app.post("/session", sessionPost);
+app.get("/session", sessionGet);
 
 // Rols
 
@@ -216,8 +263,11 @@ app.patch("/api/imagePrompt/:id", patchPromptImage);
 
 //Prompts Edit
 app.post("/api/editPrompt", promptEditPost);
+app.delete("/api/editPrompt/:id", deleteEditPrompt);
+app.patch("/api/editPrompt/:id", patchPromptImage);
 app.get("/api/editPrompt", getAllPromptEdit);
 app.post("/api/simpleEditPrompt", postSimpleEditPrompt);
+
 // User
 app.post("/api/user", userPost);
 app.get("/api/user", userGet);
