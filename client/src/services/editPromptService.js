@@ -43,22 +43,23 @@ export const getPromptEdits = async () => {
 
 
 export const updateEditPrompts = async (promptEdit) => {
-    try {
-      const response = await axios.patch(`${URL}api/editPrompt/${promptEdit._id}`, promptEdit);
-  
-      if (response.status === 200) {
-        return { error: false, promptEdit: response.data, msg: 'Elemento guardado' };
-      }
-  
-      return { error: true, promptEdite: null, msg: 'Error interno del servidor' };
-    } catch (error) {
-      if (error && error.response && error.response.data && error.response.data.msg) {
-        return { error: true, promptEdit: null, msg: error.response.data.msg };
-      }
-      console.log(error.response);
-      return { error: true, promptEdit: null, msg: 'Error interno del servidor' };
+  try {
+    const response = await axios.patch(`${URL}api/editPrompt/${promptEdit._id}`, promptEdit);
+
+    if (response.status === 200) {
+      return { error: false, promptEdit: response.data, msg: 'Elemento guardado' };
     }
-  };
+
+    return { error: true, promptEdite: null, msg: 'Error interno del servidor' };
+  } catch (error) {
+    if (error && error.response && error.response.data && error.response.data.msg) {
+      return { error: true, promptEdit: null, msg: error.response.data.msg };
+    }
+    console.log(error.response);
+    return { error: true, promptEdit: null, msg: 'Error interno del servidor' };
+  }
+};
+
   
 
   export const deleteEditPrompts = async (userId) => {

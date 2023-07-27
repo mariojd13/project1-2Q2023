@@ -11,18 +11,20 @@ import { getCategories } from '../services/typeService';
 
 
 class editsPrompt extends Component {
-    state = {
-        data: [],
-        form: {
-            name: '',
-            category_id: 'edit',
-            input: '',
-            //number: '',
-            //size: '',
-        },
-        categories: [],
-        selectedEditPrompt: null,
-        showEditsModal: false,
+    constructor(props) {
+        super(props);
+        this.state = {
+            data: [],
+            form: {
+                name: '',
+                category_id: 'edit',
+                input: '',
+                instruction: '',
+            },
+            categories: [],
+            selectedEditPrompt: null,
+            showEditsModal: false,
+        };
     };
 
     componentDidMount() {
@@ -34,15 +36,20 @@ class editsPrompt extends Component {
         try {
             const { data, error } = await getPromptEdits();
             if (!error) {
-                this.setState({ data });
+                if (Array.isArray(data)) {
+                    this.setState({ data }); // Actualizar el estado con los datos obtenidos
+                } else {
+                    this.setState({ data: [] }); // Si no hay datos, establecer un array vacío
+                }
             } else {
-                this.setState({ data: [] });
+                this.setState({ data: [] }); // Si hay un error, establecer un array vacío
             }
         } catch (error) {
             console.log(error);
-            this.setState({ data: [] });
+            this.setState({ data: [] }); // En caso de error, establecer un array vacío
         }
-    }
+    };
+
 
     getCategories = async () => {
         try {
@@ -56,7 +63,7 @@ class editsPrompt extends Component {
     }
 
     handleOpenEditModal = (promptEdit) => {
-        const { name, input, n, size } = promptEdit;
+        const { name, input, instruction } = promptEdit;
         this.setState({
             showEditsModal: true,
             selectedEditPrompt: promptEdit,
@@ -64,15 +71,13 @@ class editsPrompt extends Component {
                 name,
                 input,
                 category_id: "image",
-                //n,
-                //size,
+                instruction,
             },
             initialForm: {
                 name,
                 input,
                 category_id: "image",
-                //n,
-                //size,
+                instruction,
             },
         });
     };
@@ -84,15 +89,14 @@ class editsPrompt extends Component {
                 name: '',
                 type: 'edit',
                 input: '',
-                //n: '',
-                //size: '256x256',
+                instruction: '',
+
             },
             initialForm: {
                 name: '',
                 type: 'edit',
                 input: '',
-                //n: '',
-                //size: '256x256',
+                instruction: '',
             },
         });
     };
@@ -101,39 +105,39 @@ class editsPrompt extends Component {
 
 
 
-    // handleEditEditPrompt = async (e) => {
-    //     e.preventDefault();
-    //     const { selectedEditPrompt, form } = this.state;
-    //     const updatedEditPrompt = {
-    //         ...selectedEditPrompt,
-    //         ...form,
-    //         number: form.number,
-    //     };
+    handleEditEditPrompt = async (e) => {
+        e.preventDefault();
+        const { selectedEditPrompt, form } = this.state;
+        const updatedEditPrompt = {
+            ...selectedEditPrompt,
+            ...form,
+            number: form.number,
+        };
 
-    //     const confirmation = window.confirm(
-    //         `¿Está seguro que desea guardar los cambios para el prompt: ${selectedEditPrompt.name}?`
-    //     );
+        const confirmation = window.confirm(
+            `¿Está seguro que desea guardar los cambios para el prompt: ${selectedEditPrompt.name}?`
+        );
 
-    //     if (confirmation) {
-    //         try {
-    //             const { error, data } = await updateEditPrompts(updatedEditPrompt);
-    //             if (data && !error) {
-    //                 console.log("Prompt Edit updated:", data);
-    //                 const updatedData = this.state.data.map((selectedEditPrompt) => {
-    //                     if (selectedEditPrompt._id === data._id) {
-    //                         return data;
-    //                     }
-    //                     return selectedEditPrompt;
-    //                 });
+        if (confirmation) {
+            try {
+                const { error, data } = await updateEditPrompts(updatedEditPrompt);
+                if (data && !error) {
+                    console.log("Prompt Edit updated:", data);
+                    const updatedData = this.state.data.map((selectedEditPrompt) => {
+                        if (selectedEditPrompt._id === data._id) {
+                            return data;
+                        }
+                        return selectedEditPrompt;
+                    });
 
-    //                 this.setState({ data: updatedData });
-    //                 this.handleCloseEditsModal();
-    //             }
-    //         } catch (error) {
-    //             console.log(error);
-    //         }
-    //     }
-    // };
+                    this.setState({ data: updatedData });
+                    this.handleCloseEditsModal();
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        }
+    };
 
 
     handleCloseEditsModal = () => {
@@ -183,7 +187,7 @@ class editsPrompt extends Component {
 
     postEditPrompt = async (e) => {
         //const { form } = this.state;
-        
+
         // e.preventDefault();
 
         // this.setState({ isLoading: true });
@@ -217,7 +221,7 @@ class editsPrompt extends Component {
     };
 
     render() {
-        const { showEditsModal, showNewEditsModal, selectedEditPrompt, form } = this.state;
+        const { showEditsModal, showNewEditsModal, selectedEditPrompt, form, data } = this.state;
         return (
 
             <div className="flex">
@@ -255,8 +259,8 @@ class editsPrompt extends Component {
                             </div>
                         </div>
                         <div className="flex flex-col items-center justify-center">
-                            <h2 className="font-semibold">Agregar nuevo prompt de tipo imagen</h2>
-                            <p>Si usted desea agregar un nuevo prompt de tipo Imagen, por favor, presione el siguiente botón:</p>
+                            <h2 className="font-semibold">Agregar nuevo prompt de tipo Edit</h2>
+                            <p>Si usted desea agregar un nuevo prompt de tipo Edit, por favor, presione el siguiente botón:</p>
 
                             <button
                                 className="font-medium text-yellow-600 dark:text-yellow-500 hover:underline mt-2"
@@ -286,7 +290,7 @@ class editsPrompt extends Component {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {this.state.data.map((promptEdit) => (
+                                    {data.map((promptEdit) => (
                                         <tr key={promptEdit._id}>
                                             <td className="px-6 py-4">{promptEdit.name}</td>
                                             <td className="px-6 py-4">{promptEdit.category && promptEdit.category.name}</td>

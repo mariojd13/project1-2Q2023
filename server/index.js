@@ -142,7 +142,7 @@ app.post("/api/session", async function (req, res) {
         {
           userId: user._id,
           name: user.email,
-          permission: ["create", "edit", "delete", "read"], // Aquí puedes obtener los permisos del usuario desde la base de datos
+          permission: ["create", "edit", "delete"], // Aquí puedes obtener los permisos del usuario desde la base de datos
           deviceId: "123",
         },
         theSecretKey
@@ -201,33 +201,29 @@ app.use(function (req, res, next) {
         // El token es válido, se puede acceder a los datos decodificados como decodedToken
         console.log("Welcome", decodedToken.name);
         req.user = decodedToken; // Opcional: Puedes guardar los datos del usuario en req.user para usarlos en otras rutas
-        return res.status(200).json({
-          message: "Authentication successful",
-          user: decodedToken // Opcional: Puedes enviar los datos del usuario en la respuesta
-        });
+        next();
       } else {
         console.log("Token is invalid");
         res.status(401);
-        return res.json({
-          error: "Unauthorized",
+        res.json({
+          error: "Unauthorized3",
         });
       }
     } catch (e) {
       console.log("Error while verifying token:", e.message);
       res.status(401);
-      return res.json({
-        error: "Unauthorized",
+      res.send({
+        error: "Unauthorized4",
       });
     }
   } else {
     console.log("Authorization header not found or invalid format");
     res.status(401);
-    return res.json({
-      error: "Unauthorized",
+    res.send({
+      error: "Unauthorized5",
     });
   }
 });
-
 
 
 
@@ -267,7 +263,6 @@ app.delete("/api/editPrompt/:id", deleteEditPrompt);
 app.patch("/api/editPrompt/:id", patchPromptImage);
 app.get("/api/editPrompt", getAllPromptEdit);
 app.post("/api/simpleEditPrompt", postSimpleEditPrompt);
-
 // User
 app.post("/api/user", userPost);
 app.get("/api/user", userGet);
