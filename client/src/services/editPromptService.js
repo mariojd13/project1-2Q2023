@@ -3,7 +3,7 @@ import axios from "axios"
 const URL = 'http://localhost:3001/';
 
 
-export const createSimpleEdit = async (data) => {
+export const createEdit = async (data) => {
     //console.log("data:"+data)
     try {
         const result = await axios.post(`${URL}api/editPrompt`, data, { headers: { 'Content-Type': 'application/json' } });

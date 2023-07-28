@@ -174,6 +174,7 @@ const postSimpleEditPrompt = async (req, res) => {
   if (promptEdit.name
     && promptEdit.input
     && promptEdit.instruction
+    && promptEdit.category
 
   ) {// If all required data is provided
     try {
@@ -181,7 +182,7 @@ const postSimpleEditPrompt = async (req, res) => {
       res.status(201);//CREATED
       console.log('Image create OK');
       res.header({
-        'location': `http://localhost:3001/simpleEditPrompt/?id=${promptEdit.id}`
+        'location': `api/simpleEditPrompt/?id=${promptEdit.id}`
       });
       res.json(promptEdit);
     } catch (err) {

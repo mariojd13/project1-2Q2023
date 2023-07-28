@@ -5,8 +5,9 @@ import EditImage from '../images/edit.png';
 import DeleteImage from '../images/delete.png';
 import AddImage from '../images/new.png';
 import PlayImage from '../images/play.png';
+import See from '../images/see.png';
 
-import { getPromptEdits, updateEditPrompts, deleteEditPrompts, createEditPrompt } from '../services/editPromptService';
+import { getPromptEdits, updateEditPrompts, deleteEditPrompts, createEditPrompt, createEdit } from '../services/editPromptService';
 import { getCategories } from '../services/typeService';
 
 
@@ -20,10 +21,12 @@ class editsPrompt extends Component {
                 category_id: 'edit',
                 input: '',
                 instruction: '',
+                response: '',
             },
             categories: [],
             selectedEditPrompt: null,
             showEditsModal: false,
+            showModal: false,
         };
     };
 
@@ -63,21 +66,67 @@ class editsPrompt extends Component {
     }
 
     handleOpenEditModal = (promptEdit) => {
-        const { name, input, instruction } = promptEdit;
+        const { name, input, instruction, response } = promptEdit;
         this.setState({
             showEditsModal: true,
             selectedEditPrompt: promptEdit,
             form: {
                 name,
                 input,
-                category_id: "image",
+                category_id: "edit",
                 instruction,
+                response,
             },
             initialForm: {
                 name,
                 input,
-                category_id: "image",
+                category_id: "edit",
                 instruction,
+                response,
+            },
+        });
+    };
+
+    handleOpenShowModal = (promptEdit) => {
+        const { name, input, instruction, response } = promptEdit;
+        this.setState({
+            showModal: true,
+            selectedEditPrompt: promptEdit,
+            form: {
+                name,
+                input,
+                category_id: "edit",
+                instruction,
+                response,
+            },
+            initialForm: {
+                name,
+                input,
+                category_id: "edit",
+                instruction,
+                response,
+            },
+        });
+    };
+
+    handleOpenRunModal = (promptEdit) => {
+        const { name, input, instruction, response } = promptEdit;
+        this.setState({
+            showNewRunEditsModal: true,
+            selectedEditPrompt: promptEdit,
+            form: {
+                name,
+                input,
+                category_id: "edit",
+                instruction,
+                response,
+            },
+            initialForm: {
+                name,
+                input,
+                category_id: "edit",
+                instruction,
+                response,
             },
         });
     };
@@ -143,6 +192,8 @@ class editsPrompt extends Component {
     handleCloseEditsModal = () => {
         this.setState({ showEditsModal: false });
         this.setState({ showNewEditsModal: false });
+        this.setState({ showNewRunEditsModal: false });
+        this.setState({ showModal: false });
     };
 
     handleInputChange = (e) => {
@@ -197,14 +248,41 @@ class editsPrompt extends Component {
             category_id: '64a6313cf8d7595ee0acf85f', // Type Image
             input: e.target.elements.input.value,
             instruction: e.target.elements.instruction.value,
-            //size: e.target.elements.size.value,
-            //n: e.target.elements.n.value,
+            response: e.target.elements.instruction.value,
         };
 
         console.log("form.category_id");
         console.log(form.category_id);
 
         const result = await createEditPrompt(form);
+
+        if (!result.error) {
+            this.setState({ isLoading: false });
+            alert("Se ha registrado correctamente");
+            window.location.href = "./editPrompt";
+        }
+    };
+
+    postNewEditPrompt = async (e) => {
+        //const { form } = this.state;
+
+        // e.preventDefault();
+
+        // this.setState({ isLoading: true });
+
+        const form = {
+            name: e.target.elements.name.value,
+            category_id: '64a6313cf8d7595ee0acf85f', // Type Image
+            input: e.target.elements.input.value,
+            instruction: e.target.elements.instruction.value,
+            response: e.target.elements.instruction.value,
+            
+        };
+
+        console.log("form.category_id");
+        console.log(form.category_id);
+
+        const result = await createEdit(form);
 
         if (!result.error) {
             this.setState({ isLoading: false });
@@ -221,7 +299,7 @@ class editsPrompt extends Component {
     };
 
     render() {
-        const { showEditsModal, showNewEditsModal, selectedEditPrompt, form, data } = this.state;
+        const { showEditsModal, showNewEditsModal, selectedEditPrompt, showNewRunEditsModal, showModal, form, data } = this.state;
         return (
 
             <div className="flex">
@@ -282,9 +360,6 @@ class editsPrompt extends Component {
                                             Type
                                         </th>
                                         <th scope="col" className="px-6 py-3">
-                                            Prompt
-                                        </th>
-                                        <th scope="col" className="px-6 py-3">
                                             Action
                                         </th>
                                     </tr>
@@ -293,13 +368,12 @@ class editsPrompt extends Component {
                                     {data.map((promptEdit) => (
                                         <tr key={promptEdit._id}>
                                             <td className="px-6 py-4">{promptEdit.name}</td>
-                                            <td className="px-6 py-4">{promptEdit.category && promptEdit.category.name}</td>
-                                            <td className="px-6 py-4">{promptEdit.prompt}</td>
+                                            <td className="px-6 py-4">{"Edit"}</td>
                                             <td className="px-6 py-4">
                                                 <button
                                                     className="font-medium text-yellow-600 dark:text-yellow-500 hover:underline ml-2"
                                                     title="Run"
-                                                    onClick={this.handleOpenEditModal} // Agregamos el evento onClick para abrir el modal
+                                                    onClick={this.handleOpenRunModal} // Agregamos el evento onClick para abrir el modal
                                                 >
                                                     <img className="w-6 h-6" src={PlayImage} alt="user photo" />
                                                 </button>
@@ -310,6 +384,13 @@ class editsPrompt extends Component {
                                                     onClick={() => this.handleOpenEditModal(promptEdit)}
                                                 >
                                                     <img className="w-6 h-6" src={EditImage} alt="user photo" />
+                                                </button>
+                                                <button
+                                                    className="font-medium text-yellow-600 dark:text-yellow-500 hover:underline ml-2"
+                                                    title="See"
+                                                    onClick={() => this.handleOpenShowModal(promptEdit)}
+                                                >
+                                                    <img className="w-6 h-6" src={See} alt="user photo" />
                                                 </button>
                                                 <button
                                                     className="font-medium text-yellow-600 dark:text-yellow-500 hover:underline ml-2"
@@ -386,6 +467,19 @@ class editsPrompt extends Component {
                                             onChange={this.handleInputChange}
                                         ></textarea>
                                     </div>
+                                    <div>
+                                            <label htmlFor="response" className="block font-medium mb-1">
+                                                Response<span className="text-red-500"> *</span>
+                                            </label>
+                                            <textarea
+                                                id="response"
+                                                name="response"
+                                                className="w-full border rounded-md px-3 py-2"
+                                                value={form.response}
+                                                onChange={this.handleInputChange}
+                                                disabled
+                                            ></textarea>
+                                        </div>
                                     <div className="flex justify-end mt-6">
                                         <button
                                             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600 mr-2"
@@ -484,6 +578,197 @@ class editsPrompt extends Component {
                                         </div>
                                     </form>
                                 </div>
+                            </div>
+                        )}
+                        {showNewRunEditsModal && (
+                            <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
+
+                                <div className="bg-white rounded-lg p-8" style={{ width: '500px', height: 'auto', position: 'relative', zIndex: 1 }}>
+                                    {/* Contenido del modal de edición */}
+                                    <form onSubmit={this.postNewEditPrompt}>
+                                        <h3 className="text-2xl font-semibold mb-6">Adding new Prompt to Run</h3>
+                                        <div className="grid grid-cols-2 gap-4 mb-6">
+                                            <div className="col-span-1">
+                                                <label htmlFor="name" className="block font-medium mb-1">
+                                                    Name<span className="text-red-500"> *</span>
+                                                </label>
+                                                <input
+                                                    id="name"
+                                                    name="name"
+                                                    type="text"
+                                                    className="w-full border rounded-md px-3 py-2"
+                                                    required
+                                                    value={form.name}
+                                                    onChange={this.handleInputChange}
+                                                />
+                                            </div>
+                                            <div className="col-span-1">
+                                                <label htmlFor="type" className="block font-medium mb-1">
+                                                    Type:
+                                                </label>
+                                                <select
+                                                    id="type"
+                                                    name="type"
+                                                    className="w-full border rounded-md px-3 py-2"
+                                                    defaultValue="image"
+                                                    disabled
+                                                >
+                                                    <option value="Edit">Edit</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label htmlFor="input" className="block font-medium mb-1">
+                                                Input<span className="text-red-500"> *</span>
+                                            </label>
+                                            <input
+                                                id="input"
+                                                name="input"
+                                                type="text"
+                                                className="w-full border rounded-md px-3 py-2"
+                                                required
+                                                value={form.input}
+                                                onChange={this.handleInputChange}
+                                            />
+                                        </div>
+                                        <div>
+                                            <label htmlFor="instruction" className="block font-medium mb-1">
+                                                Instruction<span className="text-red-500"> *</span>
+                                            </label>
+                                            <textarea
+                                                id="instruction"
+                                                name="instruction"
+                                                className="w-full border rounded-md px-3 py-2"
+                                                required
+                                                value={form.instruction}
+                                                onChange={this.handleInputChange}
+                                            ></textarea>
+                                        </div>
+                                        <div>
+                                            <label htmlFor="response" className="block font-medium mb-1">
+                                                Response<span className="text-red-500"> *</span>
+                                            </label>
+                                            <textarea
+                                                id="response"
+                                                name="response"
+                                                className="w-full border rounded-md px-3 py-2"
+                                                value={form.response}
+                                                onChange={this.handleInputChange}
+                                            ></textarea>
+                                        </div>
+
+                                        <div className="flex justify-end mt-6">
+                                            <button
+                                                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600 mr-2"
+                                                type="submit"
+                                            >
+                                                Save
+                                            </button>
+                                            <button
+                                                className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 focus:outline-none focus:bg-gray-600"
+                                                onClick={this.handleCloseEditsModal}
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        )}
+                        {showModal && selectedEditPrompt && (
+                            <div className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
+                                <div className="bg-white rounded-lg p-8" style={{ width: '500px', height: 'auto', position: 'relative', zIndex: 1 }}>
+                                    {/* Contenido del modal de edición */}
+                                    <h3 className="text-2xl font-semibold mb-6">See My Prompt</h3>
+                                    <div className="grid grid-cols-2 gap-4 mb-6">
+                                        <div className="col-span-1">
+                                            <label htmlFor="name" className="block font-medium mb-1">
+                                                Name<span className="text-red-500"> *</span>
+                                            </label>
+                                            <input
+                                                id="name"
+                                                name="name"
+                                                type="text"
+                                                className="w-full border rounded-md px-3 py-2"
+                                                required
+                                                value={form.name}
+                                                onChange={this.handleInputChange}
+                                                disabled
+                                            />
+                                        </div>
+                                        <div className="col-span-1">
+                                            <label htmlFor="type" className="block font-medium mb-1">
+                                                Type:
+                                            </label>
+                                            <select
+                                                id="type"
+                                                name="type"
+                                                className="w-full border rounded-md px-3 py-2"
+                                                defaultValue="image"
+                                                disabled
+                                            >
+                                                <option value="Edit">Edit</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label htmlFor="input" className="block font-medium mb-1">
+                                            Input<span className="text-red-500"> *</span>
+                                        </label>
+                                        <input
+                                            id="input"
+                                            name="input"
+                                            type="text"
+                                            className="w-full border rounded-md px-3 py-2"
+                                            required
+                                            value={form.input}
+                                            onChange={this.handleInputChange}
+                                            disabled
+                                        />
+                                    </div>
+                                    <div>
+                                        <label htmlFor="instruction" className="block font-medium mb-1">
+                                            Instruction<span className="text-red-500"> *</span>
+                                        </label>
+                                        <textarea
+                                            id="instruction"
+                                            name="instruction"
+                                            className="w-full border rounded-md px-3 py-2"
+                                            required
+                                            value={form.instruction}
+                                            onChange={this.handleInputChange}
+                                            disabled
+                                        ></textarea>
+                                    </div>
+                                    <div>
+                                            <label htmlFor="response" className="block font-medium mb-1">
+                                                Response<span className="text-red-500"> *</span>
+                                            </label>
+                                            <textarea
+                                                id="response"
+                                                name="response"
+                                                className="w-full border rounded-md px-3 py-2"
+                                                value={form.response}
+                                                onChange={this.handleInputChange}
+                                                disabled
+                                            ></textarea>
+                                        </div>
+                                    <div className="flex justify-end mt-6">
+                                        <button
+                                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:bg-blue-600 mr-2"
+                                            onClick={this.handleEditEditPrompt}
+                                        >
+                                            Save
+                                        </button>
+                                        <button
+                                            className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 focus:outline-none focus:bg-gray-600"
+                                            onClick={this.handleCloseEditsModal}
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </div>
+
                             </div>
                         )}
                     </div>

@@ -260,7 +260,7 @@ app.patch("/api/imagePrompt/:id", patchPromptImage);
 //Prompts Edit
 app.post("/api/editPrompt", promptEditPost);
 app.delete("/api/editPrompt/:id", deleteEditPrompt);
-app.patch("/api/editPrompt/:id", patchPromptImage);
+app.patch("/api/editPrompt/:id", patchPromptEdit);
 app.get("/api/editPrompt", getAllPromptEdit);
 app.post("/api/simpleEditPrompt", postSimpleEditPrompt);
 // User
