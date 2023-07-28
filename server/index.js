@@ -33,7 +33,8 @@ const {
 // Prompts Image
 
 const {
-  promptImagePost,
+  //promptImagePost,
+  postImagePrompt,
   getAllPromptImages,
   deletePromptImage,
   patchPromptImage,
@@ -92,41 +93,6 @@ app.use(cors({
 }));
 
 
-
-// // login with JWT
-// app.post("/api/session", async function (req, res) {
-//   const { email, password1 } = req.body;
-
-//   try {
-//     // Buscar al usuario en la base de datos
-//     const user = await User.findOne({ email, password1 });
-//     console.log("User:", user);
-
-//     if (user) {
-//       // Si se encuentra el usuario, generar el token JWT con la información del usuario
-//       const token = jwt.sign(
-//         {
-//           userId: user._id,
-//           name: user.email,
-//           permission: ["create", "edit", "delete"], // Aquí puedes obtener los permisos del usuario desde la base de datos
-//           deviceId: "123",
-//         },
-//         theSecretKey
-//       );
-
-//       res.status(201).json({ token });
-//     } else {
-//       res.status(422).json({ error: "Invalid email or password" });
-//     }
-//   } catch (error) {
-//     console.error("Error:", error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// });
-
-//back up
-
-
 // login with JWT
 app.post("/api/session", async function (req, res) {
   const { email, password1 } = req.body;
@@ -159,37 +125,6 @@ app.post("/api/session", async function (req, res) {
 });
 
 
-
-
-// // JWT Authentication middleware
-// app.use(function (req, res, next) {
-//   if (req.headers["authorization"]) {
-//     const authToken = req.headers["authorization"].split(" ")[1];
-//     try {
-//       jwt.verify(authToken, theSecretKey, (err, decodedToken) => {
-//         if (err || !decodedToken) {
-//           res.status(401);
-//           res.json({
-//             error: "Unauthorized3",
-//           });
-//         } else {
-//           console.log("Welcome", decodedToken.name);
-//           next();
-//         }
-//       });
-//     } catch (e) {
-//       res.status(401);
-//       res.send({
-//         error: "Unauthorized4",
-//       });
-//     }
-//   } else {
-//     res.status(401);
-//     res.send({
-//       error: "Unauthorized5",
-//     });
-//   }
-// });
 // JWT Authentication middleware
 app.use(function (req, res, next) {
   if (req.headers["authorization"] && req.headers["authorization"].startsWith("Bearer ")) {
@@ -226,11 +161,6 @@ app.use(function (req, res, next) {
 });
 
 
-
-
-
-
-
 //SESSIION
 
 app.post("/session", sessionPost);
@@ -252,8 +182,8 @@ app.post("/api/categories", categoryPost);
 
 //Prompts Image
 app.get("/api/imagePrompt", getAllPromptImages);
-app.post("/api/imagePrompt", promptImagePost);
-app.post("/api/simpleImagePrompt", postSimpleImagePrompt);
+//app.post("/api/imagePrompt", promptImagePost);
+app.post("/api/imagePrompt", postImagePrompt);
 app.delete("/api/imagePrompt/:id", deletePromptImage);
 app.patch("/api/imagePrompt/:id", patchPromptImage);
 

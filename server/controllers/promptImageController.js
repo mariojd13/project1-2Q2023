@@ -43,7 +43,7 @@ const executePrompt = async (req, res) => {
 // }
 
 
-const promptImagePost = async (req, res) => {
+const postImagePrompt = async (req, res) => {
   try {
     const { OpenAIApi } = require("openai");
     const openai = new OpenAIApi(configuration);
@@ -58,9 +58,10 @@ const promptImagePost = async (req, res) => {
       const promptImage = new PromptImage({
         name: req.body.name,
         prompt: req.body.prompt,
-        response: JSON.stringify(response.data), // Convertir a cadena JSON
         n: req.body.n,
         size: req.body.size,
+        response: JSON.stringify(response.data), // Convertir a cadena JSON
+        
       });
 
       if (
@@ -221,7 +222,8 @@ const postSimpleImagePrompt = async (req, res) => {
 
   module.exports = {
     executePrompt,
-    promptImagePost,
+    postImagePrompt,
+    //promptImagePost,
     deletePromptImage,
     patchPromptImage,
     postSimpleImagePrompt,
